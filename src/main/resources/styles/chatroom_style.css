@@ -1,0 +1,17 @@
+.chat-messages-scrollpane{
+   -fx-background: #FFFFFF;
+   -fx-border-color: #FFFFFF;
+}
+
+.chatroom-name-label{
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+.chatroom-top{
+    -fx-background-color: rgba(42,182,255,1);
+}
+
+.chatroom-bottom{
+    -fx-background-color: rgba(42,182,255,1);
+}

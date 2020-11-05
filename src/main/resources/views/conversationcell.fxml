@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import application.views.UserImg?>
+<?import javafx.geometry.Insets?>
+<fx:root xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         type="javafx.scene.layout.GridPane"
+         hgap="10"
+         styleClass="conversation-cell">
+
+    <padding><Insets topRightBottomLeft="5" /></padding>
+    <UserImg fx:id="user_img" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.rowSpan="2" />
+    <Label fx:id="username" styleClass="con-username" text="aasdsad" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.valignment="CENTER"/>
+    <Label fx:id="signature" styleClass="con-signature" text="recv" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+</fx:root>

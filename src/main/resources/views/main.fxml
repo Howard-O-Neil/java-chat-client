@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import application.views.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root xmlns="http://javafx.com/javafx/10.0.2-internal"
+         xmlns:fx="http://javafx.com/fxml/1"
+         prefHeight="640.0" prefWidth="960.0"
+         type="javafx.scene.layout.BorderPane"
+         styleClass="main-layout">
+    <left>
+        <VBox fx:id="main_left_vbox" styleClass="main-left-vbox" alignment="TOP_CENTER" fillWidth="true" maxWidth="200" prefWidth="200" spacing="10">
+            <VBox styleClass="user-info">
+                <padding><Insets topRightBottomLeft="10"/></padding>
+                <GridPane hgap="10">
+                    <padding><Insets topRightBottomLeft="10" /></padding>
+                    <UserImg fx:id="user_img" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.rowSpan="2" />
+                    <Label fx:id="username" styleClass="username-label" text="User Name" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.valignment="CENTER"/>
+                    <Label fx:id="signature" styleClass="signature-label" text="Hello there!" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                </GridPane>
+            </VBox>
+            <VBox fx:id="pages_vbox" spacing="5">
+                <padding><Insets topRightBottomLeft="10"/></padding>
+            </VBox>
+            <Button fx:id="post_btn" styleClass="post-btn" text="New Post"/>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane fx:id="main_center_stackpane"/>
+    </center>
+
+</fx:root>

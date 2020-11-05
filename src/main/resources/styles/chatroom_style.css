@@ -1,6 +1,9 @@
+
+.chat-messages-scrollpane > .viewport{
+   -fx-background-color: transparent;
+}
 .chat-messages-scrollpane{
-   -fx-background: #FFFFFF;
-   -fx-border-color: #FFFFFF;
+   -fx-background-color: transparent;
 }
 
 .chatroom-name-label{
@@ -9,9 +12,11 @@
 }
 
 .chatroom-top{
-    -fx-background-color: rgba(42,182,255,1);
+    -fx-border-color: lightgray;
+    -fx-border-width: 0 0 1 0 ;
 }
 
 .chatroom-bottom{
-    -fx-background-color: rgba(42,182,255,1);
+    -fx-border-color: lightgray;
+    -fx-border-width: 1 0 0 0 ;
 }

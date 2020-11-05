@@ -1,6 +1,6 @@
 package application.views;
 
-import application.Main;
+import application.App;
 import application.models.Response;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -106,7 +106,7 @@ public class SearchBar extends TextField {
         CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
         try {
             client.start();
-            HttpGet request = new HttpGet(Main.apiUrl +"user/find?searchkey=" + getText());
+            HttpGet request = new HttpGet(App.apiUrl +"user/find?searchkey=" + getText());
 
             Future<HttpResponse> future = client.execute(request, null);
             HttpResponse httpResponse = future.get();

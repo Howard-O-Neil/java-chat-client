@@ -6,39 +6,35 @@
 <?import javafx.scene.shape.*?>
 
 <?import application.views.MessageText?>
-<fx:root prefHeight="480.0" prefWidth="640.0" type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<?import application.views.UserImg?>
+<fx:root xmlns="http://javafx.com/javafx/10.0.2-internal"
+         xmlns:fx="http://javafx.com/fxml/1"
+         type="javafx.scene.layout.BorderPane">
     <center>
         <ScrollPane styleClass="chat-messages-scrollpane" fitToWidth="true" vbarPolicy="NEVER" hbarPolicy="NEVER">
-            <VBox fx:id="chat_messages_vbox">
+            <VBox fx:id="chat_messages_vbox" spacing="5">
+                <padding><Insets left="10" right="10"/></padding>
             </VBox>
         </ScrollPane>
     </center>
     <top>
-        <HBox styleClass="chatroom-top">
-            <padding>
-                <Insets topRightBottomLeft="10"/>
-            </padding>
-            <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS" >
-                <Circle radius="20" />
-                <Label fx:id="chatroom_name_label" styleClass="chatroom-name-label" text="Conversation name" />
+        <HBox styleClass="chatroom-top" alignment="CENTER">
+            <padding><Insets left="10" right="10" top="10" bottom="9"/></padding>
+            <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
+                <UserImg fx:id="conversation_img" radius="15"/>
+                <Label fx:id="chatroom_name_label" styleClass="chatroom-name-label" text="Conversation name" HBox.hgrow="ALWAYS"/>
             </HBox>
-            <HBox alignment="CENTER_RIGHT" >
-                <Rectangle fx:id="setting_rect" styleClass="setting-rect" width="24" height="24"/>
-            </HBox>
+            <Rectangle fx:id="setting_rect" styleClass="setting-rect" width="20" height="20"/>
         </HBox>
     </top>
     <bottom>
         <HBox styleClass="chatroom-bottom" alignment="CENTER" spacing="10" minHeight="60">
-            <padding>
-                <Insets left="10" right="10"/>
-            </padding>
-            <Rectangle fx:id="attachment_rect" styleClass="attachment-rect" width="24" height="24"/>
+            <padding><Insets left="10" right="10"/></padding>
+            <Rectangle fx:id="attachment_rect" styleClass="attachment-rect" width="20" height="20"/>
             <TextArea fx:id="text_area" promptText="Type your message here" prefHeight="0.0" wrapText="true" HBox.hgrow="ALWAYS">
-                <HBox.margin>
-                    <Insets top="10" bottom="10"/>
-                </HBox.margin>
+                <HBox.margin><Insets top="8" bottom="8"/></HBox.margin>
             </TextArea>
-            <Rectangle fx:id="send_rect" styleClass="send-rect" width="24" height="24"/>
+            <Rectangle fx:id="send_rect" styleClass="send-rect" width="20" height="20"/>
         </HBox>
     </bottom>
 </fx:root>

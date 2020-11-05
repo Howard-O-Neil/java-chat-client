@@ -13,9 +13,9 @@
          type="javafx.scene.layout.GridPane"
          hgap="10">
     <padding><Insets left="4" right="4"/></padding>
-    <Circle fx:id="contact_icon" radius="20" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.rowSpan="2">
+    <Circle fx:id="contact_icon" radius="16" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.rowSpan="2">
     </Circle>
-    <Label fx:id="text_label" text="tesssssssssssssssssssssssssssssssssssssssssxt" maxWidth="360" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
+    <Label fx:id="text_label" text="text" maxWidth="360" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
         <padding><Insets topRightBottomLeft="8"/></padding>
     </Label>
 </fx:root>

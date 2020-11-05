@@ -1,6 +1,6 @@
 package application.controllers;
 
-import application.Main;
+import application.App;
 import application.models.Conversation;
 import application.models.Response;
 import application.models.User;
@@ -20,8 +20,6 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
-import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.concurrent.Future;
 
 public class ConversationController {
@@ -31,7 +29,7 @@ public class ConversationController {
     WebSocketClient webSocketClient = null;
 
     public void connectAndSubcribe(){
-        webSocketClient = new WebSocketClient(URI.create(Main.messageSocketUrl + "socket-service")) {
+        webSocketClient = new WebSocketClient(URI.create(App.messageSocketUrl + "socket-service")) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
             }
@@ -63,7 +61,7 @@ public class ConversationController {
         try {
             client.start();
 
-            HttpPost request = new HttpPost(Main.apiUrl + "conversation/check");
+            HttpPost request = new HttpPost(App.apiUrl + "conversation/check");
             request.setHeader("Accept", "application/json");
             request.setHeader("Content-type", "application/json");
 
@@ -115,7 +113,7 @@ public class ConversationController {
         CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
         try {
             client.start();
-            HttpGet request = new HttpGet(Main.apiUrl +"conversation/get?username=" + username +"&index=" + conversationIndex);
+            HttpGet request = new HttpGet(App.apiUrl +"conversation/get?username=" + username +"&index=" + conversationIndex);
 
             Future<HttpResponse> future = client.execute(request, null);
             HttpResponse httpResponse = future.get();
@@ -142,7 +140,7 @@ public class ConversationController {
     }
 
     public void loadConversation(){
-        User user = Main._user;
+        User user = App._userInstance.getUser();
         if(webSocketClient == null){
             connectAndSubcribe();
         }

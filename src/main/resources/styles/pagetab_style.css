@@ -1,0 +1,8 @@
+.pagetab{
+    -fx-background-color: white;
+}
+
+.pagetab-label{
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+}

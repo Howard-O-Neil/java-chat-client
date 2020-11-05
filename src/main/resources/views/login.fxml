@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+<fx:root xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         type="javafx.scene.layout.VBox"
+         styleClass="login-layout"
+         alignment="CENTER"
+         spacing="10">
+    <padding><Insets topRightBottomLeft="20"/></padding>
+    <ImageView fx:id="logo_img" fitHeight="120" fitWidth="120"/>
+    <TextField fx:id="username" styleClass="text-input" promptText="Username"/>
+    <PasswordField fx:id="password" styleClass="text-input" promptText="Password"/>
+    <Button fx:id="login_button" styleClass="login-btn" prefWidth="200" text="Log In" />
+    <Label text="Don't have account? Sign in here!" />
+</fx:root>

@@ -1,40 +1,39 @@
-.root {
+.main-layout{
     -fx-focus-color: transparent;
+    -fx-background-color: white;
+    -fx-background-radius: 10 10 10 10;
+    -fx-effect: dropshadow(gaussian, gray, 20, 0, 0, 2);
 }
 
-.top-layout{
-    -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, rgba(107,182,214,1), rgba(42,182,255,1));
+.main-left-vbox{
+    -fx-border-color: lightgray;
+    -fx-border-width: 0 1 0 0 ;
 }
 
-.user-avatar-img{
-    -fx-effect: dropshadow(gaussian, gray, 10, 0, 0, 2);
+.page-name{
+    -fx-border-color: lightgray;
+    -fx-border-width: 0 0 1 0 ;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
 }
 
-.status-dot{
-    -fx-fill: lightgreen;
-    -fx-stroke: white;
-    -fx-stroke-width: 2;
+.user-info{
+    -fx-border-color: lightgray;
+    -fx-border-width: 0 0 1 0 ;
 }
 
 .username-label{
-   -fx-font-size: 20;
+   -fx-font-size: 18;
 }
 
-.contact-list-group-label{
-   -fx-font-size: 16;
-   -fx-padding: 10 0 10 0;
-   -fx-font-weight: bold;
+.signature-label{
 }
 
-.online-contact-scrollpane{
-   -fx-background: #FFFFFF;
-   -fx-border-color: #FFFFFF;
-}
-.recent-contact-scrollpane{
-   -fx-background: #FFFFFF;
-   -fx-border-color: #FFFFFF;
+.post-btn{
+    -fx-background-color: rgba(107,182,214,1);
+    -fx-background-radius: 20 20 20 20;
+    -fx-padding: 10 10 10 10;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
 }
 
-.bottom-layout{
-    -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, rgba(107,182,214,1), rgba(42,182,255,1));
-}

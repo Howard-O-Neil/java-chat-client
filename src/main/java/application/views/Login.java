@@ -1,24 +1,25 @@
-package application.controllers;
+package application.views;
 
-import application.Main;
+import application.App;
+import application.controllers.AlertDialog;
 import application.models.Response;
 import application.models.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
-
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -29,31 +30,57 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 import java.util.concurrent.Future;
 
-public class LoginController implements Initializable {
-
-    @FXML
-    Button login_btn;
-    @FXML
-    ImageView logo_img;
+public class Login extends VBox {
 
     @FXML
     TextField username;
     @FXML
     PasswordField password;
+    @FXML
+    Button login_button;
+    @FXML
+    ImageView logo_img;
 
+    public Login(){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/login.fxml"));
+        this.getStylesheets().add(getClass().getResource("/styles/login_style.css").toExternalForm());
+        loader.setRoot(this);
+        loader.setController(this);
+        try{
+            loader.load();
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
+        BooleanProperty firstTime = new SimpleBooleanProperty(true);
+        username.focusedProperty().addListener((observable,  oldValue,  newValue) -> {
+            if(newValue && firstTime.get()){
+                this.requestFocus(); // Delegate the focus to container
+                firstTime.setValue(false); // Variable value changed for future references
+            }
+        });
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        Image img = new Image("/images/chat-icon.png");
+        login_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try{
+                    login();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        loadResource();
+    }
+
+    private void loadResource(){
+        Image img = new Image("/images/chat-logo.png");
         logo_img.setImage(img);
     }
 
-    @FXML
-    public void login(ActionEvent actionEvent) throws Exception{
+    private void login() throws Exception{
 
         User user = new User(username.getText(),password.getText());
 
@@ -61,7 +88,7 @@ public class LoginController implements Initializable {
         try {
             client.start();
 
-            HttpPost request = new HttpPost(Main.apiUrl + "user/checklogin");
+            HttpPost request = new HttpPost(App.apiUrl + "user/checklogin");
             request.setHeader("Accept", "application/json");
             request.setHeader("Content-type", "application/json");
 
@@ -84,37 +111,33 @@ public class LoginController implements Initializable {
             System.out.println("----------------------------------------");
             System.out.println(responseBody);
 
+            if(responseBody == null){
+                return;
+            }
             if (responseBody.contains("login-failed")) {
                 AlertDialog.makeAler(
-                    "Login failed",
-                    "Wrong username or password",
-                    "Please try enter a correct username and password",
-                    Alert.AlertType.INFORMATION
+                        "Login failed",
+                        "Wrong username or password",
+                        "Please try enter a correct username and password",
+                        Alert.AlertType.INFORMATION
                 );
                 return;
             }
 
             Response<User> response = gson.fromJson(responseBody, new TypeToken<Response<User>>() {}.getType());
-            Main._user = response.getData();
 
-            openChatWindow();
+            App._userInstance.setUser(response.getData());
+
+            openMainScene();
 
         } finally {
             client.close();
         }
     }
 
-    void openChatWindow() throws IOException{
-        ((Stage)login_btn.getScene().getWindow()).close();
-
-        Stage main = new Stage();
-
-        Parent main_root = FXMLLoader.load(getClass().getResource("/views/main_scene.fxml"));
-        Scene main_scene = new Scene(main_root, 960, 640);
-        main_scene.getStylesheets().add(Main.class.getResource("/styles/main_style.css").toExternalForm());
-        main.setScene(main_scene);
-        main.setTitle("Chat app");
-        main.setResizable(false);
-        main.show();
+    void openMainScene() throws IOException {
+        HBox parent = (HBox)getParent();
+        parent.getChildren().clear();
+        parent.getChildren().add(new Main());
     }
 }

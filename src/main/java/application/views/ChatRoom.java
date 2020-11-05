@@ -1,6 +1,9 @@
 package application.views;
 
-import application.Main;
+import application.App;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,7 +36,7 @@ public class ChatRoom extends BorderPane {
 
     public ChatRoom(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/chatroom.fxml"));
-        this.getStylesheets().add(Main.class.getResource("/styles/chatroom_style.css").toExternalForm());
+        this.getStylesheets().add(App.class.getResource("/styles/chatroom_style.css").toExternalForm());
         loader.setRoot(this);
         loader.setController(this);
         try{
@@ -41,8 +44,6 @@ public class ChatRoom extends BorderPane {
         }catch (IOException e){
             throw new RuntimeException(e);
         }
-
-        loadResource();
 
         send_rect.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -52,6 +53,8 @@ public class ChatRoom extends BorderPane {
                 }
             }
         });
+
+        loadResource();
     }
 
     void loadResource(){
@@ -66,11 +69,11 @@ public class ChatRoom extends BorderPane {
 
         MessageText msg1 = new MessageText();
         msg1.setAsSend();
-        msg1.setText("Hello this is send msg, that is too long to display so that it need wrap text to be true");
+        msg1.setText("Message from sender, this is a loooooooooooooooooooooooooooooooooooooooooooooooooonnnnnnnnnnnnnnnnnnnnngggggggggggggg message");
         chat_messages_vbox.getChildren().add(msg1);
         MessageText msg2 = new MessageText();
         msg2.setAsReceive();
-        msg2.setText("Hello this is send msg");
+        msg2.setText("Message from receiver");
         chat_messages_vbox.getChildren().add(msg2);
     }
 

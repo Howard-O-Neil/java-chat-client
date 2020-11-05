@@ -1,6 +1,6 @@
 package application.views;
 
-import application.Main;
+import application.App;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -19,7 +19,7 @@ public class MessageText extends GridPane {
 
     public MessageText(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/messagetext.fxml"));
-        this.getStylesheets().add(Main.class.getResource("/styles/messagetext_style.css").toExternalForm());
+        this.getStylesheets().add(App.class.getResource("/styles/messagetext_style.css").toExternalForm());
         loader.setRoot(this);
         loader.setController(this);
         try{

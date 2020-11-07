@@ -1,5 +1,6 @@
 package application.views;
 
+import application.App;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
@@ -45,13 +46,16 @@ public class MessagePage extends BorderPane {
         start_conversation_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                addConversation();
+                addConversation("ABC","xyz");
             }
         });
+        App._conversationInstance.loadConversation();
     }
 
-    void addConversation(){
+    public void addConversation(String username, String signature){
         ConversationCell cell = new ConversationCell();
+        cell.setUsername(username);
+        cell.setSignature(signature);
         cell.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {

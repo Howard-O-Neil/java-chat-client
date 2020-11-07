@@ -16,44 +16,31 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.util.EntityUtils;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompSessionHandler;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
-import java.net.URI;
 import java.util.concurrent.Future;
 
 public class ConversationController {
 
+    String URL = "ws://larryjason.com:8081/socket-service/";
+//    String URL = "ws://localhost:8002/socket-service/";
     int conversationIndex = 0;
-
-    WebSocketClient webSocketClient = null;
+    WebSocketStompClient stompClient;
 
     public void connectAndSubcribe(){
-        webSocketClient = new WebSocketClient(URI.create(App.messageSocketUrl + "socket-service")) {
-            @Override
-            public void onOpen(ServerHandshake serverHandshake) {
-            }
-
-
-            @Override
-            public void onMessage(String message) {
-            }
-
-            @Override
-            public void onClose(int i, String s, boolean b) {
-            }
-
-            @Override
-            public void onError(Exception e) {
-                e.printStackTrace();
-            }
-        };
-        webSocketClient.connect();
-    }
-
-    public void close(){
-        if(webSocketClient!=null)
-            webSocketClient.close();
+        try{
+            WebSocketClient client = new StandardWebSocketClient();
+            stompClient = new WebSocketStompClient(client);
+            stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+            StompSessionHandler sessionHandler = new ConversationStompSessionHandler();
+            stompClient.connect(URL, sessionHandler);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Boolean addNewConversation(Conversation conversation) throws Exception{
@@ -141,13 +128,12 @@ public class ConversationController {
 
     public void loadConversation(){
         User user = App._userInstance.getUser();
-        if(webSocketClient == null){
+        if(stompClient == null){
             connectAndSubcribe();
         }
-//        try {
-//            var res = getConversation(user.getUserName());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+    }
+
+    public Conversation receiveNewConversation(){
+        return null;
     }
 }

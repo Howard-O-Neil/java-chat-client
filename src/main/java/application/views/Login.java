@@ -6,6 +6,7 @@ import application.models.Response;
 import application.models.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
@@ -34,6 +35,83 @@ import java.util.concurrent.Future;
 
 public class Login extends VBox {
 
+    class LoginAuthThread extends Thread{
+        @Override
+        public void run() {
+            try{
+                login();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        Runnable failed = new Runnable() {
+            @Override
+            public void run() {
+                loginFailed();
+            }
+        };
+
+        Runnable success = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    openMainScene();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        void login() throws Exception {
+            User user = new User(username.getText(), password.getText());
+
+            CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
+            try {
+                client.start();
+
+                HttpPost request = new HttpPost(App.apiUrl + "user/checklogin");
+                request.setHeader("Accept", "application/json");
+                request.setHeader("Content-type", "application/json");
+
+                Gson gson = new Gson();
+                String json = gson.toJson(user);
+                StringEntity stringEntity = new StringEntity(json);
+                request.setEntity(stringEntity);
+
+                Future<HttpResponse> future = client.execute(request, null);
+                HttpResponse httpResponse = future.get();
+                HttpEntity entity = httpResponse.getEntity();
+                String responseBody;
+                int status = httpResponse.getStatusLine().getStatusCode();
+                if (status >= 200 && status < 300) {
+                    entity = httpResponse.getEntity();
+                    responseBody = entity != null ? EntityUtils.toString(entity) : null;
+                } else {
+                    throw new ClientProtocolException("Unexpected response status: " + status);
+                }
+                System.out.println("----------------------------------------");
+                System.out.println(responseBody);
+
+                if (responseBody == null || responseBody.contains("login-failed")) {
+                    Platform.runLater(failed);
+                }
+                else{
+                    Response<User> response = gson.fromJson(responseBody, new TypeToken<Response<User>>() {
+                    }.getType());
+                    App._userInstance.setUser(response.getData());
+
+                    Platform.runLater(success);
+                }
+
+            } finally {
+                client.close();
+            }
+
+            progessing = false;
+        }
+    }
+
     @FXML
     TextField username;
     @FXML
@@ -42,6 +120,8 @@ public class Login extends VBox {
     Button login_button;
     @FXML
     ImageView logo_img;
+
+    boolean progessing = false;
 
     public Login(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/login.fxml"));
@@ -65,7 +145,11 @@ public class Login extends VBox {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try{
-                    login();
+                    if(!progessing){
+                        progessing = true;
+                        LoginAuthThread thread = new LoginAuthThread();
+                        thread.start();
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -80,64 +164,18 @@ public class Login extends VBox {
         logo_img.setImage(img);
     }
 
-    private void login() throws Exception{
-
-        User user = new User(username.getText(),password.getText());
-
-        CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
-        try {
-            client.start();
-
-            HttpPost request = new HttpPost(App.apiUrl + "user/checklogin");
-            request.setHeader("Accept", "application/json");
-            request.setHeader("Content-type", "application/json");
-
-            Gson gson = new Gson();
-            String json = gson.toJson(user);
-            StringEntity stringEntity = new StringEntity(json);
-            request.setEntity(stringEntity);
-
-            Future<HttpResponse> future = client.execute(request, null);
-            HttpResponse httpResponse = future.get();
-            HttpEntity entity = httpResponse.getEntity();
-            String responseBody;
-            int status = httpResponse.getStatusLine().getStatusCode();
-            if (status >= 200 && status < 300) {
-                entity = httpResponse.getEntity();
-                responseBody = entity != null ? EntityUtils.toString(entity) : null;
-            } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
-            }
-            System.out.println("----------------------------------------");
-            System.out.println(responseBody);
-
-            if(responseBody == null){
-                return;
-            }
-            if (responseBody.contains("login-failed")) {
-                AlertDialog.makeAler(
-                        "Login failed",
-                        "Wrong username or password",
-                        "Please try enter a correct username and password",
-                        Alert.AlertType.INFORMATION
-                );
-                return;
-            }
-
-            Response<User> response = gson.fromJson(responseBody, new TypeToken<Response<User>>() {}.getType());
-
-            App._userInstance.setUser(response.getData());
-
-            openMainScene();
-
-        } finally {
-            client.close();
-        }
-    }
-
-    void openMainScene() throws IOException {
+    private void openMainScene() throws IOException {
         HBox parent = (HBox)getParent();
         parent.getChildren().clear();
         parent.getChildren().add(new Main());
+    }
+
+    private void loginFailed(){
+        AlertDialog.makeAler(
+                "Login failed",
+                "Wrong username or password",
+                "Please try enter a correct username and password",
+                Alert.AlertType.INFORMATION
+        );
     }
 }

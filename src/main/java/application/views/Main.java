@@ -103,7 +103,6 @@ public class Main extends BorderPane {
 
         openTab(1);
         loadUser();
-
     }
 
     void loadUser(){

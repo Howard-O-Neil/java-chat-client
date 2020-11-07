@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 public class App extends javafx.application.Application {
 
     static public String apiUrl = "http://larryjason.com:8081/api/";
-    static public String messageSocketUrl = "http://larryjason.com:8081/";
+    static public String messageSocketUrl = "http://larryjason.com:8081/socket-service/";
 
     static final public UserController _userInstance = new UserController();
     static final public MessageController _messageInstace = new MessageController();
@@ -29,12 +29,6 @@ public class App extends javafx.application.Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
-    }
-
-    @Override
-    public void stop() throws Exception {
-        super.stop();
-        _conversationInstance.close();
     }
 
     public static void main(String[] args) {

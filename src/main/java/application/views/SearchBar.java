@@ -4,6 +4,7 @@ import application.App;
 import application.models.Response;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -29,6 +30,59 @@ import java.util.concurrent.Future;
 
 
 public class SearchBar extends TextField {
+
+    class GetEntriesThread extends Thread{
+        public GetEntriesThread(){
+        }
+
+        @Override
+        public void run() {
+            try {
+                getEntriesFromApi();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+
+        Runnable updateEntries = new Runnable() {
+            @Override
+            public void run() {
+                entriesPopupUpdate();
+            }
+        };
+
+        void getEntriesFromApi() throws Exception {
+            CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
+            try {
+                client.start();
+                HttpGet request = new HttpGet(App.apiUrl +"user/find?searchkey=" + getText());
+
+                Future<HttpResponse> future = client.execute(request, null);
+                HttpResponse httpResponse = future.get();
+                HttpEntity entity = httpResponse.getEntity();
+                String responseBody;
+                int status = httpResponse.getStatusLine().getStatusCode();
+                if (status >= 200 && status < 300) {
+                    entity = httpResponse.getEntity();
+                    responseBody = entity != null ? EntityUtils.toString(entity) : null;
+                } else {
+                    throw new ClientProtocolException("Unexpected response status: " + status);
+                }
+                System.out.println("----------------------------------------");
+                System.out.println(responseBody);
+                Gson gson = new Gson();
+                Response<List<String>> response = gson.fromJson(responseBody, new TypeToken<Response<List<String>>>(){}.getType());
+                entries.clear();
+                entries.addAll(response.getData());
+
+                Platform.runLater(updateEntries);
+
+            }finally {
+                client.close();
+            }
+        }
+    }
+
     private SortedSet<String> entries;
     private ContextMenu entriesPopup;
 
@@ -46,22 +100,8 @@ public class SearchBar extends TextField {
                 if (getText().length() < 3) {
                     entriesPopup.hide();
                 } else {
-                    entries.clear();
-                    try {
-                        getEntriesFromApi();
-                    } catch (Exception exception) {
-                        exception.printStackTrace();
-                    }
-                    LinkedList<String> searchResult = new LinkedList<>();
-                    searchResult.addAll(entries);
-                    if (entries.size() > 0) {
-                        populatePopup(searchResult);
-                        if (!entriesPopup.isShowing()) {
-                            entriesPopup.show(SearchBar.this, Side.BOTTOM, 0, 0);
-                        }
-                    } else {
-                        entriesPopup.hide();
-                    }
+                    GetEntriesThread thread = new GetEntriesThread();
+                    thread.start();
                 }
             }
         });
@@ -75,8 +115,18 @@ public class SearchBar extends TextField {
 
     }
 
-    public void setEntries(SortedSet<String> entries) { this.entries = entries; }
-    public SortedSet<String> getEntries() { return entries; }
+    void entriesPopupUpdate(){
+        LinkedList<String> searchResult = new LinkedList<>();
+        searchResult.addAll(entries);
+        if (entries.size() > 0) {
+            populatePopup(searchResult);
+            if (!entriesPopup.isShowing()) {
+                entriesPopup.show(SearchBar.this, Side.BOTTOM, 0, 0);
+            }
+        } else {
+            entriesPopup.hide();
+        }
+    }
 
     void populatePopup(List<String> searchResult) {
         List<CustomMenuItem> menuItems = new LinkedList<>();
@@ -99,34 +149,5 @@ public class SearchBar extends TextField {
         }
         entriesPopup.getItems().clear();
         entriesPopup.getItems().addAll(menuItems);
-    }
-
-
-    void getEntriesFromApi() throws Exception {
-        CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
-        try {
-            client.start();
-            HttpGet request = new HttpGet(App.apiUrl +"user/find?searchkey=" + getText());
-
-            Future<HttpResponse> future = client.execute(request, null);
-            HttpResponse httpResponse = future.get();
-            HttpEntity entity = httpResponse.getEntity();
-            String responseBody;
-            int status = httpResponse.getStatusLine().getStatusCode();
-            if (status >= 200 && status < 300) {
-                entity = httpResponse.getEntity();
-                responseBody = entity != null ? EntityUtils.toString(entity) : null;
-            } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
-            }
-            System.out.println("----------------------------------------");
-            System.out.println(responseBody);
-            Gson gson = new Gson();
-            Response<List<String>> response = gson.fromJson(responseBody, new TypeToken<Response<List<String>>>(){}.getType());
-            entries.addAll(response.getData());
-
-        }finally {
-            client.close();
-        }
     }
 }

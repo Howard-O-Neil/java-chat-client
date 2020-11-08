@@ -13,10 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -48,7 +45,12 @@ public class Login extends VBox {
         Runnable failed = new Runnable() {
             @Override
             public void run() {
-                loginFailed();
+                AlertDialog.makeAler(
+                        "Login failed",
+                        "Wrong username or password",
+                        "Please try enter a correct username and password",
+                        Alert.AlertType.INFORMATION
+                );
             }
         };
 
@@ -81,11 +83,10 @@ public class Login extends VBox {
 
                 Future<HttpResponse> future = client.execute(request, null);
                 HttpResponse httpResponse = future.get();
-                HttpEntity entity = httpResponse.getEntity();
                 String responseBody;
                 int status = httpResponse.getStatusLine().getStatusCode();
                 if (status >= 200 && status < 300) {
-                    entity = httpResponse.getEntity();
+                    HttpEntity entity = httpResponse.getEntity();
                     responseBody = entity != null ? EntityUtils.toString(entity) : null;
                 } else {
                     throw new ClientProtocolException("Unexpected response status: " + status);
@@ -112,12 +113,103 @@ public class Login extends VBox {
         }
     }
 
+    class SignUpThread extends Thread{
+        @Override
+        public void run() {
+            try{
+                signup();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        Runnable failed = new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.makeAler(
+                        "Sign up failed",
+                        "Terrible username or password",
+                        "Please try enter a better username and password",
+                        Alert.AlertType.INFORMATION
+                );
+            }
+        };
+
+        Runnable success = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    AlertDialog.makeAler(
+                            "Sign up success",
+                            "OK",
+                            "You can now log in",
+                            Alert.AlertType.INFORMATION
+                    );
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        void signup() throws Exception {
+            User user = new User(username.getText(), password.getText());
+
+            CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
+            try {
+                client.start();
+
+                HttpPost request = new HttpPost(App.apiUrl + "user/add");
+                request.setHeader("Accept", "application/json");
+                request.setHeader("Content-type", "application/json");
+
+                Gson gson = new Gson();
+                String json = gson.toJson(user);
+                StringEntity stringEntity = new StringEntity(json);
+                request.setEntity(stringEntity);
+
+                Future<HttpResponse> future = client.execute(request, null);
+                HttpResponse httpResponse = future.get();
+                String responseBody;
+                int status = httpResponse.getStatusLine().getStatusCode();
+                if (status >= 200 && status < 300) {
+                    HttpEntity entity = httpResponse.getEntity();
+                    responseBody = entity != null ? EntityUtils.toString(entity) : null;
+                } else {
+                    throw new ClientProtocolException("Unexpected response status: " + status);
+                }
+                System.out.println("----------------------------------------");
+                System.out.println(responseBody);
+
+                if (responseBody == null || responseBody.contains("login-failed")) {
+                    Platform.runLater(failed);
+                }
+                else{
+                    Response<Boolean> response = gson.fromJson(responseBody, new TypeToken<Response<Boolean>>() {
+                    }.getType());
+                    if(response.getData() == true){
+                        Platform.runLater(success);
+                    }
+                    else{
+                        Platform.runLater(failed);
+                    }
+                }
+
+            } finally {
+                client.close();
+            }
+
+            progessing = false;
+        }
+    }
+
     @FXML
     TextField username;
     @FXML
     PasswordField password;
     @FXML
     Button login_button;
+    @FXML
+    Hyperlink signup_link;
     @FXML
     ImageView logo_img;
 
@@ -156,6 +248,21 @@ public class Login extends VBox {
             }
         });
 
+        signup_link.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try{
+                    if(!progessing){
+                        progessing = true;
+                        SignUpThread thread = new SignUpThread();
+                        thread.start();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+
         loadResource();
     }
 
@@ -171,6 +278,9 @@ public class Login extends VBox {
     }
 
     private void loginFailed(){
+
+    }
+    private void signFailed(){
         AlertDialog.makeAler(
                 "Login failed",
                 "Wrong username or password",

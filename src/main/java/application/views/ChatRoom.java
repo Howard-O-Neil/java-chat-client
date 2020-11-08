@@ -1,6 +1,7 @@
 package application.views;
 
 import application.App;
+import application.models.Message;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
@@ -34,7 +35,7 @@ public class ChatRoom extends BorderPane {
     @FXML
     VBox chat_messages_vbox;
 
-    public ChatRoom(){
+    public ChatRoom(String name){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/chatroom.fxml"));
         this.getStylesheets().add(App.class.getResource("/styles/chatroom_style.css").toExternalForm());
         loader.setRoot(this);
@@ -55,6 +56,18 @@ public class ChatRoom extends BorderPane {
         });
 
         loadResource();
+        chatroom_name_label.setText(name);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    App._messageInstace.loadMessasgeFromConversation(name);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     void loadResource(){
@@ -67,21 +80,36 @@ public class ChatRoom extends BorderPane {
         Image sendImg = new Image("/images/send-icon.png");
         send_rect.setFill(new ImagePattern(sendImg));
 
-        MessageText msg1 = new MessageText();
-        msg1.setAsSend();
-        msg1.setText("Message from sender, this is a loooooooooooooooooooooooooooooooooooooooooooooooooonnnnnnnnnnnnnnnnnnnnngggggggggggggg message");
-        chat_messages_vbox.getChildren().add(msg1);
-        MessageText msg2 = new MessageText();
-        msg2.setAsReceive();
-        msg2.setText("Message from receiver");
-        chat_messages_vbox.getChildren().add(msg2);
+        // sample text msg
+
     }
 
     void sendMessage(){
         if(text_area.getText().isEmpty()) return;
         System.out.println("msg send");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                App._messageInstace.sendMessage(chatroom_name_label.getText(), text_area.getText());
+            }
+        }).start();
+
         text_area.setText("");
     }
 
-    public void setChatName(String name){ chatroom_name_label.setText(name);}
+    public void addMessage(Message message){
+        MessageText msg = new MessageText();
+
+        if(message.getSender() == App._userInstance.getUser().getUserName()){
+            msg.setAsSend();
+            msg.setText(message.getContent());
+            chat_messages_vbox.getChildren().add(msg);
+        }
+        else{
+            msg.setAsReceive();
+            msg.setText(message.getContent());
+            chat_messages_vbox.getChildren().add(msg);
+        }
+    }
 }

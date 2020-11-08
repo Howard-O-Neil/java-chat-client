@@ -14,8 +14,6 @@ public class MessageText extends GridPane {
 
     @FXML
     Label text_label;
-    @FXML
-    Circle contact_icon;
 
     public MessageText(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/messagetext.fxml"));
@@ -27,22 +25,18 @@ public class MessageText extends GridPane {
         }catch (IOException e){
             throw new RuntimeException(e);
         }
-
-        contact_icon.managedProperty().bind(contact_icon.visibleProperty());
     }
 
     public void setAsSend(){
         this.setAlignment(Pos.BASELINE_RIGHT);
         text_label.getStyleClass().clear();
         text_label.getStyleClass().add("msg-text-send");
-        contact_icon.setVisible(false);
     }
 
     public void setAsReceive(){
         this.setAlignment(Pos.BASELINE_LEFT);
         text_label.getStyleClass().clear();
         text_label.getStyleClass().add("msg-text-receive");
-        contact_icon.setVisible(true);
     }
 
     public void setText(String text){

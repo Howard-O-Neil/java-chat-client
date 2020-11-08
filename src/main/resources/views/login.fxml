@@ -19,5 +19,5 @@
     <TextField fx:id="username" styleClass="text-input" promptText="Username"/>
     <PasswordField fx:id="password" styleClass="text-input" promptText="Password"/>
     <Button fx:id="login_button" styleClass="login-btn" prefWidth="200" text="Log In" />
-    <Label text="Don't have account? Sign in here!" />
+    <Hyperlink fx:id="signup_link" text="Don't have account? Sign in here!" />
 </fx:root>

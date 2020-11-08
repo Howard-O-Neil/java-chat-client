@@ -79,7 +79,7 @@ public class Main extends BorderPane {
         tab3.setText("Messages");
         tab3.setImage("/images/message-icon.png");
         pages_vbox.getChildren().add(tab3);
-        messagePage = new MessagePage();
+        messagePage = MessagePage.getInstance();
         main_center_stackpane.getChildren().add(messagePage);
         tab3.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override

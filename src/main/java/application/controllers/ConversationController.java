@@ -4,8 +4,10 @@ import application.App;
 import application.models.Conversation;
 import application.models.Response;
 import application.models.User;
+import application.views.MessagePage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -17,33 +19,105 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.simp.stomp.StompSessionHandler;
+import org.springframework.messaging.simp.stomp.*;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.Transport;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Future;
 
 public class ConversationController {
 
-    String URL = "ws://larryjason.com:8081/socket-service/";
-//    String URL = "ws://localhost:8002/socket-service/";
     int conversationIndex = 0;
-    WebSocketStompClient stompClient;
+    StompSession session;
 
-    public void connectAndSubcribe(){
-        try{
-            WebSocketClient client = new StandardWebSocketClient();
-            stompClient = new WebSocketStompClient(client);
-            stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-            StompSessionHandler sessionHandler = new ConversationStompSessionHandler();
-            stompClient.connect(URL, sessionHandler);
-        } catch (Exception e) {
-            e.printStackTrace();
+    void connectAndSubcribe() throws Exception{
+        WebSocketClient simpleWebSocketClient = new StandardWebSocketClient();
+        List<Transport> transports = new ArrayList<>(1);
+        transports.add(new WebSocketTransport(simpleWebSocketClient));
+
+        SockJsClient sockJsClient = new SockJsClient(transports);
+        WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        StompSessionHandler sessionHandler = new StompSessionHandlerAdapter() {
+            @Override
+            public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+                session.subscribe("/conversation/" + App._userInstance.getUser().getUserName(), new StompFrameHandler() {
+                    @Override
+                    public Type getPayloadType(StompHeaders stompHeaders) {
+                        return Response.class;
+                    }
+
+                    @Override
+                    public void handleFrame(StompHeaders stompHeaders, Object payload) {
+                        Response<Conversation> response = (Response<Conversation>) payload;
+                        System.out.println("handle frame");
+                        if(response.getStatus() != 200) return;
+                        if(response.getData().getSender() == App._userInstance.getUser().getUserName()){
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MessagePage.getInstance().addConversation(response.getData());
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        };
+        session = stompClient.connect(App.messageSocketUrl, sessionHandler).get();
+    }
+
+    private void notifyNewConversation(String username) {
+        Conversation conversation = new Conversation(
+                App._userInstance.getUser().getUserName(),
+                username
+        );
+
+        Gson gson = new Gson();
+        String json = gson.toJson(conversation);
+        session.send("/service/notify-conversation",json);
+    }
+
+    private List<Conversation> getConversation(String username) throws Exception{
+        CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
+        try {
+            client.start();
+            HttpGet request = new HttpGet(App.apiUrl +"conversation/get?username=" + username+ "&index=" + conversationIndex);
+
+            Future<HttpResponse> future = client.execute(request, null);
+            HttpResponse httpResponse = future.get();
+            String responseBody;
+            int status = httpResponse.getStatusLine().getStatusCode();
+            if (status >= 200 && status < 300) {
+                HttpEntity entity = httpResponse.getEntity();
+                responseBody = entity != null ? EntityUtils.toString(entity) : null;
+            } else {
+                throw new ClientProtocolException("Unexpected response status: " + status);
+            }
+            System.out.println("----------------------------------------");
+            System.out.println(responseBody);
+            Gson gson = new Gson();
+            Response<List<Conversation>> response = gson.fromJson(responseBody, new TypeToken<Response<List<Conversation>>>(){}.getType());
+
+            return response.getData();
+
+        }finally {
+            client.close();
         }
     }
 
-    public Boolean addNewConversation(Conversation conversation) throws Exception{
+    public void addNewConversation(String username) throws Exception{
+        Conversation conversation = new Conversation(
+                App._userInstance.getUser().getUserName(),
+                username
+        );
         CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
         try {
             client.start();
@@ -54,37 +128,30 @@ public class ConversationController {
 
             Gson gson = new Gson();
             String json = gson.toJson(conversation);
-            StringEntity stringEntity = new StringEntity(json);
-            request.setEntity(stringEntity);
+            request.setEntity(new StringEntity(json));
 
             Future<HttpResponse> future = client.execute(request, null);
             HttpResponse httpResponse = future.get();
-            HttpEntity entity = httpResponse.getEntity();
             String responseBody;
             int status = httpResponse.getStatusLine().getStatusCode();
             if (status >= 200 && status < 300) {
-                entity = httpResponse.getEntity();
+                HttpEntity entity = httpResponse.getEntity();
                 responseBody = entity != null ? EntityUtils.toString(entity) : null;
             } else {
                 throw new ClientProtocolException("Unexpected response status: " + status);
             }
             System.out.println("----------------------------------------");
             System.out.println(responseBody);
-            if(responseBody == null){
-                return false;
-            }
-            else if (responseBody.contains("conversation not available")){
-                AlertDialog.makeAler(
-                        "Conversation",
-                        "conversation not available",
-                        "Please find another conversation",
-                        Alert.AlertType.INFORMATION
-                );
-                return false;
+            if(responseBody == null || responseBody.contains("conversation not available")){
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        noConversation();
+                    }
+                });
             }
             else{
-                notifyNewConversation(conversation);
-                return true;
+                notifyNewConversation(username);
             }
         }
         finally {
@@ -92,48 +159,30 @@ public class ConversationController {
         }
     }
 
-    void notifyNewConversation(Conversation conversation) {
-
+    private void noConversation(){
+        AlertDialog.makeAler(
+                "Conversation",
+                "conversation not available",
+                "Please find another conversation",
+                Alert.AlertType.INFORMATION
+        );
     }
 
-    public Conversation getConversation(String username) throws Exception{
-        CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
-        try {
-            client.start();
-            HttpGet request = new HttpGet(App.apiUrl +"conversation/get?username=" + username +"&index=" + conversationIndex);
-
-            Future<HttpResponse> future = client.execute(request, null);
-            HttpResponse httpResponse = future.get();
-            HttpEntity entity = httpResponse.getEntity();
-            String responseBody;
-            int status = httpResponse.getStatusLine().getStatusCode();
-            if (status >= 200 && status < 300) {
-                entity = httpResponse.getEntity();
-                responseBody = entity != null ? EntityUtils.toString(entity) : null;
-            } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
-            }
-            System.out.println("----------------------------------------");
-            System.out.println(responseBody);
-
-            Gson gson = new Gson();
-            Response<Conversation> response = gson.fromJson(responseBody, new TypeToken<Response<Conversation>>(){}.getType());
-
-            return response.getData();
-        }
-        finally {
-            client.close();
-        }
-    }
-
-    public void loadConversation(){
+    public void loadConversation() throws Exception{
         User user = App._userInstance.getUser();
-        if(stompClient == null){
+        if(session == null){
             connectAndSubcribe();
         }
+        List<Conversation> list = getConversation(user.getUserName());
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                for(Conversation c : list){
+                    MessagePage.getInstance().addConversation(c);
+                }
+            }
+        });
     }
 
-    public Conversation receiveNewConversation(){
-        return null;
-    }
 }

@@ -59,11 +59,10 @@ public class SearchBar extends TextField {
 
                 Future<HttpResponse> future = client.execute(request, null);
                 HttpResponse httpResponse = future.get();
-                HttpEntity entity = httpResponse.getEntity();
                 String responseBody;
                 int status = httpResponse.getStatusLine().getStatusCode();
                 if (status >= 200 && status < 300) {
-                    entity = httpResponse.getEntity();
+                    HttpEntity entity = httpResponse.getEntity();
                     responseBody = entity != null ? EntityUtils.toString(entity) : null;
                 } else {
                     throw new ClientProtocolException("Unexpected response status: " + status);

@@ -1,6 +1,7 @@
 package application.views;
 
 import application.App;
+import application.models.Conversation;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
@@ -46,27 +47,81 @@ public class MessagePage extends BorderPane {
         start_conversation_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                addConversation("ABC","xyz");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+                            App._conversationInstance.addNewConversation(searchbar.getText());
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
             }
         });
-        App._conversationInstance.loadConversation();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    App._conversationInstance.loadConversation();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    App._messageInstace.loadMessage();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
-    public void addConversation(String username, String signature){
+    static public MessagePage _instance;
+
+    static public MessagePage getInstance(){
+        if(_instance == null) _instance = new MessagePage();
+        return _instance;
+    }
+
+    public void addConversation(Conversation conversation){
         ConversationCell cell = new ConversationCell();
-        cell.setUsername(username);
-        cell.setSignature(signature);
+        cell.setUsername(conversation.getReceiver());
+        cell.setSignature("signature");
         cell.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                openChat();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+                            App._messageInstace.loadFromConversation(conversation.getReceiver());
+                        }
+                        catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
             }
         });
         conversation_vbox.getChildren().add(cell);
     }
 
-    void openChat(){
-        ChatRoom room = new ChatRoom();
+    ChatRoom currentRoom;
+
+    public ChatRoom getRoom() { return currentRoom; }
+
+    public void openChatRoom(String name){
+        ChatRoom room = new ChatRoom(name);
+        currentRoom = room;
         this.setCenter(room);
     }
 }

@@ -2,11 +2,13 @@ package application.controllers;
 
 import application.App;
 import application.models.Conversation;
+import application.models.Message;
 import application.models.Response;
 import application.models.User;
 import application.views.MessagePage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.apache.http.HttpEntity;
@@ -34,7 +36,6 @@ import java.util.concurrent.Future;
 
 public class ConversationController {
 
-    int conversationIndex = 0;
     StompSession session;
 
     void connectAndSubcribe() throws Exception{
@@ -56,16 +57,27 @@ public class ConversationController {
 
                     @Override
                     public void handleFrame(StompHeaders stompHeaders, Object payload) {
-                        Response<Conversation> response = (Response<Conversation>) payload;
-                        System.out.println("handle frame");
-                        if(response.getStatus() != 200) return;
-                        if(response.getData().getSender() == App._userInstance.getUser().getUserName()){
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    MessagePage.getInstance().addConversation(response.getData());
-                                }
-                            });
+                        System.out.println("-----------------------------------------");
+                        System.out.println("Receive from server:");
+                        try{
+                            Gson gson = new Gson();
+                            String json = gson.toJson(payload);
+                            System.out.println(json);
+                            Response<Conversation> response = gson.fromJson(json, new TypeToken<Response<Conversation>>(){}.getType());
+                            Conversation conversation = response.getData();
+                            if(response.getStatus() != 200) return;
+                            if(conversation.getSender().equals(App._userInstance.getUser().getUserName())){
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        int index = MessagePage.getInstance().getConversationIndex();
+                                        MessagePage.getInstance().addConversation(conversation);
+                                        MessagePage.getInstance().setConversationIndex(index + 1);
+                                    }
+                                });
+                            }
+                        } catch (Exception e){
+                            e.printStackTrace();
                         }
                     }
                 });
@@ -80,16 +92,14 @@ public class ConversationController {
                 username
         );
 
-        Gson gson = new Gson();
-        String json = gson.toJson(conversation);
-        session.send("/service/notify-conversation",json);
+        session.send("/service/notify-conversation", conversation);
     }
 
     private List<Conversation> getConversation(String username) throws Exception{
         CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
         try {
             client.start();
-            HttpGet request = new HttpGet(App.apiUrl +"conversation/get?username=" + username+ "&index=" + conversationIndex);
+            HttpGet request = new HttpGet(App.apiUrl +"conversation/get?username=" + username+ "&index=" + MessagePage.getInstance().getConversationIndex());
 
             Future<HttpResponse> future = client.execute(request, null);
             HttpResponse httpResponse = future.get();
@@ -178,9 +188,12 @@ public class ConversationController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                for(Conversation c : list){
-                    MessagePage.getInstance().addConversation(c);
+                int index = MessagePage.getInstance().getConversationIndex();
+                int count = list.size();
+                for(int i = count - 1; i >=0; i-- ){
+                    MessagePage.getInstance().addConversation(list.get(i));
                 }
+                MessagePage.getInstance().setConversationIndex(index + count);
             }
         });
     }

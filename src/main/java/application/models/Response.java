@@ -6,6 +6,8 @@ public class Response<T> {
     private String message;
     private T data;
 
+    public Response(){}
+
     public Response(T data, int status, String error, String message) {
         this.setData(data);
         this.setStatus(status);

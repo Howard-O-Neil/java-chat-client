@@ -32,7 +32,6 @@ import java.util.concurrent.Future;
 
 public class MessageController {
 
-    int messageIndex = 0;
     StompSession session;
 
     void connectAndSubcribe() throws Exception{
@@ -54,14 +53,28 @@ public class MessageController {
 
                     @Override
                     public void handleFrame(StompHeaders stompHeaders, Object payload) {
-                        Response<Message> response = (Response<Message>) payload;
-                        if(response.getStatus() != 200) return;
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                MessagePage.getInstance().getRoom().addMessage(response.getData());
+                        System.out.println("-----------------------------------------");
+                        System.out.println("Receive from server:");
+                        try{
+                            Gson gson = new Gson();
+                            String json = gson.toJson(payload);
+                            System.out.println(json);
+                            Response<Message> response = gson.fromJson(json, new TypeToken<Response<Message>>(){}.getType());
+                            Message message = response.getData();
+                            if(response.getStatus() != 200) return;
+                            if(message.getSender().equals(App._userInstance.getUser().getUserName())) {
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        int index = MessagePage.getInstance().getRoom().getMessageIndex();
+                                        MessagePage.getInstance().getRoom().addMessage(message);
+                                        MessagePage.getInstance().getRoom().setMessageIndex(index + 1);
+                                    }
+                                });
                             }
-                        });
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 });
             }
@@ -73,7 +86,7 @@ public class MessageController {
         CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
         try {
             client.start();
-            HttpGet request = new HttpGet(App.apiUrl +"message/get?sender=" + sender + "&receiver=" + receiver + "&index=" + messageIndex);
+            HttpGet request = new HttpGet(App.apiUrl +"message/get?sender=" + sender + "&receiver=" + receiver + "&index=" + MessagePage.getInstance().getRoom().getMessageIndex());
 
             Future<HttpResponse> future = client.execute(request, null);
             HttpResponse httpResponse = future.get();
@@ -104,9 +117,7 @@ public class MessageController {
                 content
         );
 
-        Gson gson = new Gson();
-        String json = gson.toJson(message);
-        session.send("/service/chat",json);
+        session.send("/service/chat", message);
     }
 
     public void loadFromConversation(String receiver) throws Exception{
@@ -126,9 +137,12 @@ public class MessageController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                for(Message m : list){
-                    MessagePage.getInstance().getRoom().addMessage(m);
+                int index = MessagePage.getInstance().getRoom().getMessageIndex();
+                int count = list.size();
+                for(int i = count - 1; i >=0; i-- ){
+                    MessagePage.getInstance().getRoom().addMessage(list.get(i));
                 }
+                MessagePage.getInstance().getRoom().setMessageIndex(index + count);
             }
         });
     }

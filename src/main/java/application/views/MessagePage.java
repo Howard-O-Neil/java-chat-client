@@ -24,6 +24,8 @@ public class MessagePage extends BorderPane {
     @FXML
     VBox conversation_vbox;
 
+    int conversationIndex = 0;
+
     public MessagePage(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/messagepage.fxml"));
         this.getStylesheets().add(getClass().getResource("/styles/messagepage_style.css").toExternalForm());
@@ -92,6 +94,9 @@ public class MessagePage extends BorderPane {
         return _instance;
     }
 
+    public int getConversationIndex() { return conversationIndex; }
+    public void setConversationIndex(int i) {conversationIndex = i;}
+
     public void addConversation(Conversation conversation){
         ConversationCell cell = new ConversationCell();
         cell.setUsername(conversation.getReceiver());
@@ -112,7 +117,7 @@ public class MessagePage extends BorderPane {
                 }).start();
             }
         });
-        conversation_vbox.getChildren().add(cell);
+        conversation_vbox.getChildren().add(0,cell);
     }
 
     ChatRoom currentRoom;

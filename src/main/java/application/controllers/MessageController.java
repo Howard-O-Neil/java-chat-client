@@ -62,16 +62,14 @@ public class MessageController {
                             Response<Message> response = gson.fromJson(json, new TypeToken<Response<Message>>(){}.getType());
                             Message message = response.getData();
                             if(response.getStatus() != 200) return;
-                            if(message.getSender().equals(App._userInstance.getUser().getUserName())) {
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        int index = MessagePage.getInstance().getRoom().getMessageIndex();
-                                        MessagePage.getInstance().getRoom().addMessage(message);
-                                        MessagePage.getInstance().getRoom().setMessageIndex(index + 1);
-                                    }
-                                });
-                            }
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    int index = MessagePage.getInstance().getRoom().getMessageIndex();
+                                    MessagePage.getInstance().getRoom().addMessage(message);
+                                    MessagePage.getInstance().getRoom().setMessageIndex(index + 1);
+                                }
+                            });
                         } catch (Exception e){
                             e.printStackTrace();
                         }

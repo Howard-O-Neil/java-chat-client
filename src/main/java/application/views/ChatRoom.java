@@ -106,7 +106,6 @@ public class ChatRoom extends BorderPane {
 
     void sendMessage(){
         if(text_area.getText().isEmpty()) return;
-        System.out.println("msg send");
 
         new Thread(new Runnable() {
             @Override
@@ -140,7 +139,7 @@ public class ChatRoom extends BorderPane {
     }
 
     public void goToBottomScrollPane(){
-        chat_scrollpane.setVvalue(0.9f);
-        chat_scrollpane.setVvalue(1.0f);
+        chat_messages_vbox.layout();
+        chat_scrollpane.setVvalue(1.0d);
     }
 }

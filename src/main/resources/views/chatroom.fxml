@@ -11,7 +11,7 @@
          xmlns:fx="http://javafx.com/fxml/1"
          type="javafx.scene.layout.BorderPane">
     <center>
-        <ScrollPane fx:id="chat_scrollpane" styleClass="chat-messages-scrollpane" fitToWidth="true" vbarPolicy="NEVER" hbarPolicy="NEVER">
+        <ScrollPane fx:id="chat_scrollpane" styleClass="chat-messages-scrollpane" fitToWidth="true" vbarPolicy="NEVER" hbarPolicy="NEVER" pannable="true">
             <padding><Insets left="10" right="10" top="5" bottom="5"/></padding>
             <VBox fx:id="chat_messages_vbox" spacing="5">
             </VBox>

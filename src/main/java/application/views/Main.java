@@ -109,7 +109,7 @@ public class Main extends BorderPane {
         User user = App._userInstance.getUser();
 
         user_img.load("/images/user-avatar.png",20);
-        //username.setText(user.getUserName());
+        username.setText(user.getUserName());
         signature.setText("acbxyz");
     }
 

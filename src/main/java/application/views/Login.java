@@ -17,6 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -30,7 +31,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
-public class Login extends VBox {
+public class Login extends StackPane {
 
     class LoginAuthThread extends Thread{
         @Override
@@ -38,6 +39,13 @@ public class Login extends VBox {
             try{
                 login();
             }catch (Exception e){
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ConnectError();
+                        progessing = false;
+                    }
+                });
                 e.printStackTrace();
             }
         }
@@ -119,6 +127,13 @@ public class Login extends VBox {
             try{
                 signup();
             }catch (Exception e){
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ConnectError();
+                        progessing = false;
+                    }
+                });
                 e.printStackTrace();
             }
         }
@@ -128,8 +143,8 @@ public class Login extends VBox {
             public void run() {
                 AlertDialog.makeAler(
                         "Sign up failed",
-                        "Terrible username or password",
-                        "Please try enter a better username and password",
+                        "Some thing went wrong",
+                        "Please try again or another username/password",
                         Alert.AlertType.INFORMATION
                 );
             }
@@ -145,6 +160,9 @@ public class Login extends VBox {
                             "You can now log in",
                             Alert.AlertType.INFORMATION
                     );
+                    login_link.fire();
+                    username.setText(signup_username.getText());
+                    password.setText(signup_password.getText());
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -152,7 +170,7 @@ public class Login extends VBox {
         };
 
         void signup() throws Exception {
-            User user = new User(username.getText(), password.getText());
+            User user = new User(signup_username.getText(), signup_password.getText());
 
             CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
             try {
@@ -203,15 +221,38 @@ public class Login extends VBox {
     }
 
     @FXML
+    VBox login_layout;
+    @FXML
+    ImageView logo_img1;
+    @FXML
+    ImageView logo_img2;
+    @FXML
     TextField username;
     @FXML
     PasswordField password;
     @FXML
+    Label login_check_msg;
+    @FXML
     Button login_button;
     @FXML
     Hyperlink signup_link;
+
     @FXML
-    ImageView logo_img;
+    VBox signup_layout;
+    @FXML
+    TextField signup_username;
+    @FXML
+    TextField signup_email;
+    @FXML
+    PasswordField signup_password;
+    @FXML
+    PasswordField confirm_password;
+    @FXML
+    Label signup_check_msg;
+    @FXML
+    Button signup_button;
+    @FXML
+    Hyperlink login_link;
 
     boolean progessing = false;
 
@@ -233,32 +274,57 @@ public class Login extends VBox {
             }
         });
 
-        login_button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                try{
-                    if(!progessing){
-                        progessing = true;
-                        LoginAuthThread thread = new LoginAuthThread();
-                        thread.start();
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
+        login_layout.managedProperty().bind(login_layout.visibleProperty());
+        login_layout.setVisible(true);
+        signup_layout.managedProperty().bind(signup_layout.visibleProperty());
+        signup_layout.setVisible(false);
 
         signup_link.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                try{
-                    if(!progessing){
-                        progessing = true;
-                        SignUpThread thread = new SignUpThread();
-                        thread.start();
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
+                if(progessing) return;
+                login_layout.setVisible(false);
+                signup_layout.setVisible(true);
+                signup_username.clear();
+                signup_email.clear();
+                signup_password.clear();
+                confirm_password.clear();
+                signup_check_msg.setText("");
+            }
+        });
+
+        login_link.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(progessing) return;
+                signup_layout.setVisible(false);
+                login_layout.setVisible(true);
+                username.clear();
+                password.clear();
+                login_check_msg.setText("");
+            }
+        });
+
+        login_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(!verifyLogIn()) return;
+                if(!progessing){
+                    progessing = true;
+                    LoginAuthThread thread = new LoginAuthThread();
+                    thread.start();
+                }
+            }
+        });
+
+        signup_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(!verifySignUp()) return;
+                if(!progessing){
+                    progessing = true;
+                    SignUpThread thread = new SignUpThread();
+                    thread.start();
                 }
             }
         });
@@ -266,9 +332,44 @@ public class Login extends VBox {
         loadResource();
     }
 
+    private Boolean verifyLogIn(){
+        if(username.getText().isBlank()){
+            login_check_msg.setText("username can\'t be blank");
+            return false;
+        }
+        if(password.getText().isBlank()){
+            login_check_msg.setText("password can\'t be blank");
+            return false;
+        }
+        login_check_msg.setText("");
+        return true;
+    }
+
+    private Boolean verifySignUp(){
+        if(signup_username.getText().isBlank()){
+            signup_check_msg.setText("username can\'t be blank");
+            return false;
+        }
+        if(!signup_email.getText().matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")){
+            signup_check_msg.setText("email is invalid");
+            return false;
+        }
+        if(signup_password.getText().isBlank()){
+            signup_check_msg.setText("password can\'t be blank");
+            return false;
+        }
+        if(!confirm_password.getText().contentEquals(signup_password.getText())){
+            signup_check_msg.setText("password not match");
+            return false;
+        }
+        signup_check_msg.setText("");
+        return true;
+    }
+
     private void loadResource(){
         Image img = new Image("/images/chat-logo.png");
-        logo_img.setImage(img);
+        logo_img1.setImage(img);
+        logo_img2.setImage(img);
     }
 
     private void openMainScene() throws IOException {
@@ -277,14 +378,11 @@ public class Login extends VBox {
         parent.getChildren().add(new Main());
     }
 
-    private void loginFailed(){
-
-    }
-    private void signFailed(){
+    private void ConnectError(){
         AlertDialog.makeAler(
-                "Login failed",
-                "Wrong username or password",
-                "Please try enter a correct username and password",
+                "Connection error",
+                "Can\'t connect to server",
+                "Please try again",
                 Alert.AlertType.INFORMATION
         );
     }

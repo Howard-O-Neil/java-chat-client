@@ -4,7 +4,8 @@
     -fx-effect: dropshadow(gaussian, gray, 20, 0, 0, 2);
 }
 
-.text-input{
+.check-msg{
+    -fx-text-fill: red;
 }
 
 .login-btn{

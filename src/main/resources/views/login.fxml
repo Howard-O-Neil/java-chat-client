@@ -10,14 +10,27 @@
 <?import javafx.scene.image.ImageView?>
 <fx:root xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
-         type="javafx.scene.layout.VBox"
-         styleClass="login-layout"
-         alignment="CENTER"
-         spacing="10">
-    <padding><Insets topRightBottomLeft="20"/></padding>
-    <ImageView fx:id="logo_img" fitHeight="120" fitWidth="120"/>
-    <TextField fx:id="username" styleClass="text-input" promptText="Username"/>
-    <PasswordField fx:id="password" styleClass="text-input" promptText="Password"/>
-    <Button fx:id="login_button" styleClass="login-btn" prefWidth="200" text="Log In" />
-    <Hyperlink fx:id="signup_link" text="Don't have account? Sign in here!" />
+         type="javafx.scene.layout.StackPane"
+         styleClass="login-layout">
+    <VBox fx:id="login_layout" alignment="CENTER" spacing="10">
+        <padding><Insets topRightBottomLeft="20"/></padding>
+        <ImageView fx:id="logo_img1" fitHeight="120" fitWidth="120"/>
+        <TextField fx:id="username" styleClass="text-input" promptText="Username"/>
+        <PasswordField fx:id="password" styleClass="text-input" promptText="Password"/>
+        <Label fx:id="login_check_msg" styleClass="check-msg" text=""/>
+        <Button fx:id="login_button" styleClass="login-btn" prefWidth="200" text="Log In" />
+        <Hyperlink fx:id="signup_link" text="Don't have account? Sign up here!" />
+    </VBox>
+    <VBox fx:id="signup_layout" alignment="CENTER" spacing="10">
+        <padding><Insets topRightBottomLeft="20"/></padding>
+        <ImageView fx:id="logo_img2" fitHeight="120" fitWidth="120"/>
+        <TextField fx:id="signup_username" styleClass="text-input" promptText="Username"/>
+        <TextField fx:id="signup_email" styleClass="text-input" promptText="Email"/>
+        <PasswordField fx:id="signup_password" styleClass="text-input" promptText="Password"/>
+        <PasswordField fx:id="confirm_password" styleClass="text-input" promptText="Confirm password"/>
+        <Label fx:id="signup_check_msg" styleClass="check-msg" text=""/>
+        <Button fx:id="signup_button" styleClass="login-btn" prefWidth="200" text="Sign Up" />
+        <Hyperlink fx:id="login_link" text="Already have an account? Login here!" />
+    </VBox>
+
 </fx:root>

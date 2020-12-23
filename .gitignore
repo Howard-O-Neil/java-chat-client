@@ -1,1 +1,5 @@
 target/
+Backend/data/*
+Backend/logs/*
+Backend/target
+Backend/client/*

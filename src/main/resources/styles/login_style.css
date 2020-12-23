@@ -1,17 +1,17 @@
-.login-layout{
-    -fx-background-color: white;
-    -fx-background-radius: 20 20 20 20;
-    -fx-effect: dropshadow(gaussian, gray, 20, 0, 0, 2);
+.login-layout {
+  -fx-background-color: white;
+  -fx-background-radius: 20 20 20 20;
+  -fx-effect: dropshadow(gaussian, gray, 20, 0, 0, 2);
 }
 
-.check-msg{
-    -fx-text-fill: red;
+.check-msg {
+  -fx-text-fill: red;
 }
 
-.login-btn{
-    -fx-background-color: rgba(107,182,214,1);
-    -fx-background-radius: 20 20 20 20;
-    -fx-padding: 10 10 10 10;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
+.login-btn {
+  -fx-background-color: rgba(107, 182, 214, 1);
+  -fx-background-radius: 20 20 20 20;
+  -fx-padding: 10 10 10 10;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
 }

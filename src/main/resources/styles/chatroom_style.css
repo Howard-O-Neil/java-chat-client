@@ -1,22 +1,21 @@
-
-.chat-messages-scrollpane > .viewport{
-   -fx-background-color: transparent;
+.chat-messages-scrollpane > .viewport {
+  -fx-background-color: transparent;
 }
-.chat-messages-scrollpane{
-   -fx-background-color: transparent;
-}
-
-.chatroom-name-label{
-    -fx-font-size: 14;
-    -fx-font-weight: bold;
+.chat-messages-scrollpane {
+  -fx-background-color: transparent;
 }
 
-.chatroom-top{
-    -fx-border-color: lightgray;
-    -fx-border-width: 0 0 1 0 ;
+.chatroom-name-label {
+  -fx-font-size: 14;
+  -fx-font-weight: bold;
 }
 
-.chatroom-bottom{
-    -fx-border-color: lightgray;
-    -fx-border-width: 1 0 0 0 ;
+.chatroom-top {
+  -fx-border-color: lightgray;
+  -fx-border-width: 0 0 1 0;
+}
+
+.chatroom-bottom {
+  -fx-border-color: lightgray;
+  -fx-border-width: 1 0 0 0;
 }

@@ -1,32 +1,31 @@
-
 .conversation-scrollpane > .viewport {
-    -fx-background-color: transparent;
+  -fx-background-color: transparent;
 }
-.conversation-scrollpane{
-    -fx-background-color: transparent;
-    -fx-border-color: lightgray;
-    -fx-border-width: 0 0 1 0 ;
-}
-
-.message-searchbar{
-    -fx-border-color: lightgray;
-    -fx-border-width: 0 0 1 0 ;
+.conversation-scrollpane {
+  -fx-background-color: transparent;
+  -fx-border-color: lightgray;
+  -fx-border-width: 0 0 1 0;
 }
 
-.message-left-vbox{
-    -fx-border-color: lightgray;
-    -fx-border-width: 0 1 0 0 ;
+.message-searchbar {
+  -fx-border-color: lightgray;
+  -fx-border-width: 0 0 1 0;
 }
 
-.start-btn{
-    -fx-background-color: rgba(107,182,214,1);
-    -fx-background-radius: 20 20 20 20;
-    -fx-padding: 10 10 10 10;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
+.message-left-vbox {
+  -fx-border-color: lightgray;
+  -fx-border-width: 0 1 0 0;
 }
 
-.conversation-cell{
-    -fx-border-color: lightgray;
-    -fx-border-width: 0 0 1 0 ;
+.start-btn {
+  -fx-background-color: rgba(107, 182, 214, 1);
+  -fx-background-radius: 20 20 20 20;
+  -fx-padding: 10 10 10 10;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+}
+
+.conversation-cell {
+  -fx-border-color: lightgray;
+  -fx-border-width: 0 0 1 0;
 }

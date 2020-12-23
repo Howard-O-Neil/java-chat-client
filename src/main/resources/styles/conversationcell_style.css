@@ -1,13 +1,12 @@
-.conversation-cell{
-    -fx-border-color: lightgray;
-    -fx-border-width: 0 0 1 0 ;
+.conversation-cell {
+  -fx-border-color: lightgray;
+  -fx-border-width: 0 0 1 0;
 }
 
-.con-username{
-    -fx-font-size: 14;
+.con-username {
+  -fx-font-size: 14;
 }
 
-
-.con-signature{
-    -fx-font-size: 10;
+.con-signature {
+  -fx-font-size: 10;
 }

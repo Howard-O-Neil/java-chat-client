@@ -4,81 +4,87 @@ import java.util.UUID;
 
 public class Message {
 
-    private UUID id;
-    private String sender;
-    private String receiver;
-    private String content;
-    private String orderId;
-    private String unixTime;
+  private UUID id;
+  private String sender;
+  private String receiver;
+  private String content;
+  private String orderId;
+  private String unixTime;
 
-    public Message() {}
+  public Message() {}
 
-    public Message(String sender, String receiver, String content) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.content = content;
-    }
+  public Message(String sender, String receiver, String content) {
+    this.sender = sender;
+    this.receiver = receiver;
+    this.content = content;
+  }
 
-    public Message(UUID id, String orderId, String sender, String receiver, String content) {
-        this.id = id;
-        this.orderId = orderId;
-        this.sender = sender;
-        this.receiver = receiver;
-        this.content = content;
-    }
+  public Message(
+    UUID id,
+    String orderId,
+    String sender,
+    String receiver,
+    String content
+  ) {
+    this.id = id;
+    this.orderId = orderId;
+    this.sender = sender;
+    this.receiver = receiver;
+    this.content = content;
+  }
 
-    public Message(UUID id, String sender, String receiver, String content) {
-        this.id = id;
-        this.sender = sender;
-        this.receiver = receiver;
-        this.content = content;
-    }
+  public Message(UUID id, String sender, String receiver, String content) {
+    this.id = id;
+    this.sender = sender;
+    this.receiver = receiver;
+    this.content = content;
+  }
 
-    public UUID getId() {
-        return this.id;
-    }
+  public UUID getId() {
+    return this.id;
+  }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+  public void setId(UUID id) {
+    this.id = id;
+  }
 
-    public String getOrderId() {
-        return this.orderId;
-    }
+  public String getOrderId() {
+    return this.orderId;
+  }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
+  public void setOrderId(String orderId) {
+    this.orderId = orderId;
+  }
 
-    public String getSender() {
-        return this.sender;
-    }
+  public String getSender() {
+    return this.sender;
+  }
 
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
+  public void setSender(String sender) {
+    this.sender = sender;
+  }
 
-    public String getReceiver() {
-        return this.receiver;
-    }
+  public String getReceiver() {
+    return this.receiver;
+  }
 
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
-    }
+  public void setReceiver(String receiver) {
+    this.receiver = receiver;
+  }
 
-    public String getContent() {
-        return this.content;
-    }
+  public String getContent() {
+    return this.content;
+  }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+  public void setContent(String content) {
+    this.content = content;
+  }
 
-    public String getUnixTime() {
-        return this.unixTime;
-    }
+  public String getUnixTime() {
+    return this.unixTime;
+  }
 
-    public void setUnixTime(String unixTime) {
-        this.unixTime = unixTime;
-    }
+  public void setUnixTime(String unixTime) {
+    this.unixTime = unixTime;
+  }
 }

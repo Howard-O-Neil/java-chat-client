@@ -1,31 +1,60 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.geometry.Insets?>
 <?import application.views.SearchBar?>
 <?import application.views.ConversationCell?>
-<fx:root xmlns="http://javafx.com/javafx"
-         xmlns:fx="http://javafx.com/fxml"
-         type="javafx.scene.layout.BorderPane">
+<fx:root
+  xmlns="http://javafx.com/javafx"
+  xmlns:fx="http://javafx.com/fxml"
+  type="javafx.scene.layout.BorderPane"
+>
     <left>
-        <VBox fillWidth="true" styleClass="message-left-vbox" maxWidth="200" prefWidth="200" alignment="CENTER">
-            <Label text="Message" styleClass="page-name" textAlignment="LEFT" prefWidth="Infinity">
-                <padding><Insets topRightBottomLeft="10"/></padding>
+        <VBox
+      fillWidth="true"
+      styleClass="message-left-vbox"
+      maxWidth="200"
+      prefWidth="200"
+      alignment="CENTER"
+    >
+            <Label
+        text="Message"
+        styleClass="page-name"
+        textAlignment="LEFT"
+        prefWidth="Infinity"
+      >
+                <padding><Insets topRightBottomLeft="10" /></padding>
             </Label>
             <VBox styleClass="message-searchbar">
-                <padding><Insets topRightBottomLeft="10"/></padding>
-                <SearchBar fx:id="searchbar" styleClass="message-searchbar" promptText="Search..."/>
+                <padding><Insets topRightBottomLeft="10" /></padding>
+                <SearchBar
+          fx:id="searchbar"
+          styleClass="message-searchbar"
+          promptText="Search..."
+        />
             </VBox>
-            <ScrollPane styleClass="conversation-scrollpane" fitToWidth="true" VBox.vgrow="ALWAYS" vbarPolicy="NEVER" pannable="true">
-                <padding><Insets topRightBottomLeft="10"/></padding>
-                <VBox fx:id="conversation_vbox" styleClass="conversation-vbox" fillWidth="true"/>
+            <ScrollPane
+        styleClass="conversation-scrollpane"
+        fitToWidth="true"
+        VBox.vgrow="ALWAYS"
+        vbarPolicy="NEVER"
+        pannable="true"
+      >
+                <padding><Insets topRightBottomLeft="10" /></padding>
+                <VBox
+          fx:id="conversation_vbox"
+          styleClass="conversation-vbox"
+          fillWidth="true"
+        />
             </ScrollPane>
-            <Button fx:id="start_conversation_button" styleClass="start-btn" text="Start conversation">
+            <Button
+        fx:id="start_conversation_button"
+        styleClass="start-btn"
+        text="Start conversation"
+      >
                 <VBox.margin><Insets topRightBottomLeft="10" /></VBox.margin>
             </Button>
         </VBox>

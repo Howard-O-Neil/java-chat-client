@@ -1,3 +1,7 @@
-.root{
-    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, rgba(107,182,214,1), rgba(42,182,255,1));
+.root {
+  -fx-background-color: linear-gradient(
+    from 0% 0% to 0% 100%,
+    rgba(107, 182, 214, 1),
+    rgba(42, 182, 255, 1)
+  );
 }

@@ -1,5 +1,6 @@
 package application.views;
 
+import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -8,33 +9,37 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
-import java.io.IOException;
-
 public class PageTab extends HBox {
 
-    @FXML
-    Rectangle imagerect;
-    @FXML
-    Label label;
+  @FXML
+  Rectangle imagerect;
 
-    public PageTab(){
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/pagetab.fxml"));
-        this.getStylesheets().add(getClass().getResource("/styles/pagetab_style.css").toExternalForm());
-        loader.setRoot(this);
-        loader.setController(this);
-        try{
-            loader.load();
-        }catch (IOException e){
-            throw new RuntimeException(e);
-        }
-    }
+  @FXML
+  Label label;
 
-    public void setImage(String url){
-        Image img = new Image(url);
-        imagerect.setFill(new ImagePattern(img));
+  public PageTab() {
+    FXMLLoader loader = new FXMLLoader(
+      getClass().getResource("/views/pagetab.fxml")
+    );
+    this.getStylesheets()
+      .add(
+        getClass().getResource("/styles/pagetab_style.css").toExternalForm()
+      );
+    loader.setRoot(this);
+    loader.setController(this);
+    try {
+      loader.load();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    public void setText(String text){
-        label.setText(text);
-    }
+  public void setImage(String url) {
+    Image img = new Image(url);
+    imagerect.setFill(new ImagePattern(img));
+  }
+
+  public void setText(String text) {
+    label.setText(text);
+  }
 }

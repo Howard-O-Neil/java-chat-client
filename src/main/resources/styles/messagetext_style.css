@@ -1,13 +1,11 @@
-
-
-.msg-text-send{
-    -fx-background-color: lightblue;
-    -fx-font-size: 14;
-    -fx-background-radius: 10 0 10 10;
+.msg-text-send {
+  -fx-background-color: lightblue;
+  -fx-font-size: 14;
+  -fx-background-radius: 10 0 10 10;
 }
 
-.msg-text-receive{
-    -fx-background-color: lightgray;
-    -fx-font-size: 14;
-    -fx-background-radius: 0 10 10 10;
+.msg-text-receive {
+  -fx-background-color: lightgray;
+  -fx-font-size: 14;
+  -fx-background-radius: 0 10 10 10;
 }

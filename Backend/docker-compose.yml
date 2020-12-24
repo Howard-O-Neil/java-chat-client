@@ -16,8 +16,7 @@ services:
       - chat-dtb
     build:
       context: ./
-      dockerfile: dockerfile
-    entrypoint: ["./mvnw.sh", "spring-boot:run"]
+      dockerfile: dockerfile.javadev
     restart: always
     ports:
       - "8081:8002"

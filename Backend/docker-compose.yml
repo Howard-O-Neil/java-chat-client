@@ -17,12 +17,12 @@ services:
     build:
       context: ./
       dockerfile: dockerfile
+    entrypoint: ["./mvnw.sh", "spring-boot:run"]
     restart: always
     ports:
       - "8081:8002"
     volumes:
       - ./:/app
-    entrypoint: ["./mvnw", "spring-boot:run"]
     networks:
       chat_net:
         ipv4_address: 10.1.2.3

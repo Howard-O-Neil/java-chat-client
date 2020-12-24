@@ -3,3 +3,9 @@ EXPOSE 8002
 
 VOLUME /app
 WORKDIR /app
+
+ADD mvnw.sh .
+ADD mvnw.cmd .
+RUN chmod +x mvnw.sh
+RUN chmod +x mvnw.cmd
+  

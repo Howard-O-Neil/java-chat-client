@@ -127,7 +127,6 @@ public class ChatRoom extends BorderPane {
     Image sendImg = new Image("/images/send-icon.png");
     send_rect.setFill(new ImagePattern(sendImg));
     // sample text msg
-
   }
 
   void sendMessage() {
@@ -144,8 +143,7 @@ public class ChatRoom extends BorderPane {
           text_area.setText("");
         }
       }
-    )
-      .start();
+    ).start();
   }
 
   public void addMessage(Message message) {

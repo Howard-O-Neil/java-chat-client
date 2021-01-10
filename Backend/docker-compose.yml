@@ -5,6 +5,9 @@ services:
     container_name: "chatdtb"
     image: mongo
     restart: always
+    ports:
+      - "8283:27017"
+      - "8284:28017"
     volumes:
       - ./data:/data/db
     networks:

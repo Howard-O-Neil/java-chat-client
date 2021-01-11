@@ -1,5 +1,8 @@
 package application;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import application.controllers.ConversationController;
 import application.controllers.MessageController;
 import application.controllers.UserController;
@@ -19,11 +22,16 @@ public class App extends javafx.application.Application {
   public static final UserController _userInstance = new UserController();
   public static final MessageController _messageInstace = new MessageController();
   public static final ConversationController _conversationInstance = new ConversationController();
+  public static final ExecutorService executor = Executors.newFixedThreadPool(5);
 
   @Override
   public void start(Stage primaryStage) throws Exception {
     AppScene app = new AppScene();
     Scene scene = new Scene(app, 1280, 720);
+
+    primaryStage.setOnCloseRequest(e -> {
+      App.executor.shutdown();
+    });
 
     primaryStage.setTitle("App");
     primaryStage.setScene(scene);

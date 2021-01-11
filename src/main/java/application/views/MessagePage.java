@@ -3,14 +3,14 @@ package application.views;
 import application.App;
 import application.models.Conversation;
 import java.io.IOException;
+import java.util.concurrent.FutureTask;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -21,6 +21,9 @@ public class MessagePage extends BorderPane {
 
   @FXML
   Button start_conversation_button;
+
+  @FXML
+  ScrollPane conversation_scrollPane;
 
   @FXML
   VBox conversation_vbox;
@@ -39,6 +42,8 @@ public class MessagePage extends BorderPane {
     }
     managedProperty().bind(visibleProperty());
 
+    conversation_scrollPane.setContent(conversation_vbox);
+
     BooleanProperty firstTime = new SimpleBooleanProperty(true);
 
     searchbar.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -49,30 +54,30 @@ public class MessagePage extends BorderPane {
     });
 
     start_conversation_button.setOnAction(actionEvent -> {
-      new Thread(() -> {
+      App.executor.execute(() -> {
         try {
           App._conversationInstance.addNewConversation(searchbar.getText());
         } catch (Exception e) {
           e.printStackTrace();
         }
-      }).start();
+      });
     });
 
-    new Thread(() -> {
+    App.executor.execute(() -> {
       try {
         App._conversationInstance.loadConversation();
       } catch (Exception e) {
         e.printStackTrace();
       }
-    }).start();
+    });
 
-    new Thread(() -> {
+    App.executor.execute(() -> {
       try {
         App._messageInstace.loadMessage();
       } catch (Exception e) {
         e.printStackTrace();
       }
-    }).start();
+    });
   }
 
   public static MessagePage _instance;
@@ -95,22 +100,22 @@ public class MessagePage extends BorderPane {
     ConversationCell cell = new ConversationCell();
     cell.setUsername(conversation.getReceiver());
 
-    new Thread(() -> {
+    App.executor.execute(() -> {
       try {
         App._userInstance.requestConversationSignature(conversation.getReceiver(), cell);
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
-    }).start();
+    });
 
     cell.setOnMouseClicked(mouseEvent -> {
-      new Thread(() -> {
+      App.executor.execute(() -> {
         try {
           App._messageInstace.loadFromConversation(conversation.getReceiver());
         } catch (Exception e) {
           e.printStackTrace();
         }
-      }).start();
+      });
     });
     conversation_vbox.getChildren().add(0, cell);
   }

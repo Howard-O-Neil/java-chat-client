@@ -27,7 +27,7 @@ public class HomePage extends StackPane {
     }
 
     ImageView img = new ImageView();
-    img.setImage(ImageHelper.createImage("https://static.hentai-gif-anime.com/upload/20160509/11/22350/detail.gif"));
+    img.setImage(ImageHelper.createImage("https://i.giphy.com/media/xT0GqetcAXDkrGkire/source.gif"));
     this.getChildren().add(img);
     
     managedProperty().bind(visibleProperty());

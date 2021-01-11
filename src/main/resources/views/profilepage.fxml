@@ -1,13 +1,24 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<fx:root
-  xmlns="http://javafx.com/javafx"
-  xmlns:fx="http://javafx.com/fxml"
-  type="javafx.scene.layout.StackPane"
->
-    <Label text="this thi profile" />
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+
+<fx:root type="javafx.scene.layout.StackPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane prefHeight="431.0" prefWidth="590.0">
+         <children>
+            <Pane layoutX="14.0" layoutY="14.0" prefHeight="320.0" prefWidth="402.0">
+               <children>
+                  <ScrollPane layoutX="51.0" layoutY="29.0" prefHeight="246.0" prefWidth="317.0">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="246.0" prefWidth="317.0" />
+                    </content>
+                  </ScrollPane>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+   </children>
 </fx:root>

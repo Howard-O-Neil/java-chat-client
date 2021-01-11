@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -62,7 +63,7 @@ public class ChatRoom extends BorderPane {
     // set property
     chat_scrollpane.setContent(chat_messages_vbox);
     chat_messages_vbox.setOnScroll(e -> {
-      double deltaY = e.getDeltaY()*5; 
+      double deltaY = e.getDeltaY()*2; 
       double width = chat_scrollpane.getContent().getBoundsInLocal().getWidth();
       double vvalue = chat_scrollpane.getVvalue();
       chat_scrollpane.setVvalue(vvalue + -deltaY/width);
@@ -89,16 +90,13 @@ public class ChatRoom extends BorderPane {
     loadResource();
     chatroom_name_label.setText(name);
 
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          App._messageInstace.loadMessasgeFromConversation(name);
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
+    App.executor.execute(() -> {
+      try {
+        App._messageInstace.loadMessasgeFromConversation(name);
+      } catch (Exception e) {
+        e.printStackTrace();
       }
-    }).start();
+    });
   }
 
   public int getMessageIndex() {
@@ -133,14 +131,11 @@ public class ChatRoom extends BorderPane {
     if (text_area.getText().isEmpty())
       return;
 
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        App._messageInstace.sendMessage(chatroom_name_label.getText(), 
-          text_area.getText(), MessageFileType.NONE, "");
-        text_area.setText("");
-      }
-    }).start();
+    App.executor.execute(() -> {
+      App._messageInstace.sendMessage(chatroom_name_label.getText(), 
+        text_area.getText(), MessageFileType.NONE, "");
+      text_area.setText("");
+    });
   }
 
   public void addMessage(Message message) {
@@ -155,6 +150,21 @@ public class ChatRoom extends BorderPane {
       msg.setAsReceive();
       msg.setText(message.getContent());
       chat_messages_vbox.getChildren().add(0, msg);
+    }
+  }
+
+  public void addLastMessage(Message message) {
+    User user = App._userInstance.getUser();
+    MessageText msg = new MessageText();
+
+    if (message.getSender().equals(user.getUserName())) {
+      msg.setAsSend();
+      msg.setText(message.getContent());
+      chat_messages_vbox.getChildren().add(msg);
+    } else {
+      msg.setAsReceive();
+      msg.setText(message.getContent());
+      chat_messages_vbox.getChildren().add(msg);
     }
   }
 }

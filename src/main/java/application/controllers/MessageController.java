@@ -78,7 +78,7 @@ public class MessageController {
                         .getInstance()
                         .getRoom()
                         .getMessageIndex();
-                      MessagePage.getInstance().getRoom().addMessage(message);
+                      MessagePage.getInstance().getRoom().addLastMessage(message);
                       MessagePage
                         .getInstance()
                         .getRoom()

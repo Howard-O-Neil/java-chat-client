@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -14,10 +15,15 @@
 
 <fx:root type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <center>
-        <ScrollPane fx:id="chat_scrollpane" fitToWidth="true" hbarPolicy="NEVER" pannable="true" styleClass="chat-messages-scrollpane" vbarPolicy="ALWAYS" vvalue="0.48">
+        <ScrollPane fx:id="chat_scrollpane" fitToWidth="true" hbarPolicy="NEVER" styleClass="chat-messages-scrollpane" vbarPolicy="ALWAYS">
             <padding><Insets bottom="5" left="10" right="10" top="5" /></padding>
-            <VBox fx:id="chat_messages_vbox" prefHeight="0.0" prefWidth="609.0" spacing="5">
+            <VBox fx:id="chat_messages_vbox" prefHeight="0.0" prefWidth="609.0" spacing="5"></VBox>
+         <!-- <AnchorPane fx:id="scrollAnchor">
+            <children>
+                  
             </VBox>
+            </children>
+         </AnchorPane> -->
         </ScrollPane>
     </center>
     <top>

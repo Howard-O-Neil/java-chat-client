@@ -1,6 +1,9 @@
 package application.views;
 
 import java.io.IOException;
+
+import application.App;
+import application.controllers.UserController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -29,11 +32,13 @@ public class ConversationCell extends GridPane {
       );
     loader.setRoot(this);
     loader.setController(this);
+
     try {
       loader.load();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    
     user_img.load("/images/user-avatar.png", 16);
   }
 

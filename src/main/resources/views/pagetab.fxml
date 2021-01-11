@@ -1,21 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.image.ImageView?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.Rectangle?>
-<fx:root
-  xmlns="http://javafx.com/javafx"
-  xmlns:fx="http://javafx.com/fxml"
-  type="javafx.scene.layout.HBox"
-  styleClass="pagetab"
-  spacing="10"
-  alignment="CENTER_LEFT"
->
+
+<fx:root alignment="CENTER_LEFT" spacing="10" styleClass="pagetab" type="javafx.scene.layout.HBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <padding><Insets topRightBottomLeft="8" /></padding>
-    <Rectangle fx:id="imagerect" width="24" height="24" />
+    <Rectangle fx:id="imagerect" height="24" width="24" />
     <Label fx:id="label" styleClass="pagetab-label" />
+   <cursor>
+      <Cursor fx:constant="HAND" />
+   </cursor>
 </fx:root>

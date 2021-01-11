@@ -1,88 +1,43 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+
 <?import application.views.MessageText?>
 <?import application.views.UserImg?>
-<fx:root
-  xmlns="http://javafx.com/javafx/10.0.2-internal"
-  xmlns:fx="http://javafx.com/fxml/1"
-  type="javafx.scene.layout.BorderPane"
->
+
+<fx:root type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <center>
-        <ScrollPane
-      fx:id="chat_scrollpane"
-      styleClass="chat-messages-scrollpane"
-      fitToWidth="true"
-      vbarPolicy="NEVER"
-      hbarPolicy="NEVER"
-      pannable="true"
-    >
-            <padding><Insets
-          left="10"
-          right="10"
-          top="5"
-          bottom="5"
-        /></padding>
-            <VBox fx:id="chat_messages_vbox" spacing="5">
+        <ScrollPane fx:id="chat_scrollpane" fitToWidth="true" hbarPolicy="NEVER" pannable="true" styleClass="chat-messages-scrollpane" vbarPolicy="ALWAYS" vvalue="0.48">
+            <padding><Insets bottom="5" left="10" right="10" top="5" /></padding>
+            <VBox fx:id="chat_messages_vbox" prefHeight="0.0" prefWidth="609.0" spacing="5">
             </VBox>
         </ScrollPane>
     </center>
     <top>
-        <HBox styleClass="chatroom-top" alignment="CENTER">
-            <padding><Insets
-          left="10"
-          right="10"
-          top="10"
-          bottom="9"
-        /></padding>
+        <HBox alignment="CENTER" styleClass="chatroom-top">
+            <padding><Insets bottom="9" left="10" right="10" top="10" /></padding>
             <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
                 <UserImg fx:id="conversation_img" radius="15" />
-                <Label
-          fx:id="chatroom_name_label"
-          styleClass="chatroom-name-label"
-          text="Conversation name"
-          HBox.hgrow="ALWAYS"
-        />
+                <Label fx:id="chatroom_name_label" styleClass="chatroom-name-label" text="Conversation name" HBox.hgrow="ALWAYS" />
             </HBox>
-            <Rectangle
-        fx:id="setting_rect"
-        styleClass="setting-rect"
-        width="20"
-        height="20"
-      />
+            <Rectangle fx:id="setting_rect" height="20" styleClass="setting-rect" width="20" />
         </HBox>
     </top>
     <bottom>
-        <HBox
-      styleClass="chatroom-bottom"
-      alignment="CENTER"
-      spacing="10"
-      minHeight="60"
-    >
+        <HBox alignment="CENTER" minHeight="60" spacing="10" styleClass="chatroom-bottom">
             <padding><Insets left="10" right="10" /></padding>
-            <Rectangle
-        fx:id="attachment_rect"
-        styleClass="attachment-rect"
-        width="20"
-        height="20"
-      />
-            <TextArea
-        fx:id="text_area"
-        promptText="Type your message here"
-        prefHeight="0.0"
-        wrapText="true"
-        HBox.hgrow="ALWAYS"
-      >
-                <HBox.margin><Insets top="8" bottom="8" /></HBox.margin>
+            <Rectangle fx:id="attachment_rect" height="20" styleClass="attachment-rect" width="20" />
+            <TextArea fx:id="text_area" prefHeight="0.0" promptText="Type your message here" wrapText="true" HBox.hgrow="ALWAYS">
+                <HBox.margin><Insets bottom="8" top="8" /></HBox.margin>
             </TextArea>
-            <Rectangle
-        fx:id="send_rect"
-        styleClass="send-rect"
-        width="20"
-        height="20"
-      />
+            <Rectangle fx:id="send_rect" height="20" styleClass="send-rect" width="20" />
         </HBox>
     </bottom>
 </fx:root>

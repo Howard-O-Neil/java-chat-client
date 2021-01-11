@@ -1,40 +1,29 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import application.views.UserImg?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
-<fx:root
-  xmlns="http://javafx.com/javafx"
-  xmlns:fx="http://javafx.com/fxml"
-  type="javafx.scene.layout.GridPane"
-  hgap="10"
-  styleClass="conversation-cell"
->
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import application.views.UserImg?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<fx:root hgap="10" styleClass="conversation-cell" type="javafx.scene.layout.GridPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
 
     <padding><Insets topRightBottomLeft="5" /></padding>
-    <UserImg
-    fx:id="user_img"
-    GridPane.columnIndex="0"
-    GridPane.rowIndex="0"
-    GridPane.rowSpan="2"
-  />
-    <Label
-    fx:id="username"
-    styleClass="con-username"
-    text="aasdsad"
-    GridPane.columnIndex="1"
-    GridPane.rowIndex="0"
-    GridPane.valignment="CENTER"
-  />
-    <Label
-    fx:id="signature"
-    styleClass="con-signature"
-    text="recv"
-    GridPane.columnIndex="1"
-    GridPane.rowIndex="1"
-  />
+    <UserImg fx:id="user_img" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.rowSpan="2" />
+    <Label fx:id="username" styleClass="con-username" text="aasdsad" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+    <Label fx:id="signature" styleClass="con-signature" text="recv" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
+   <cursor>
+      <Cursor fx:constant="HAND" />
+   </cursor>
 
 </fx:root>

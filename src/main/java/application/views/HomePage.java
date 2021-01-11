@@ -1,7 +1,14 @@
 package application.views;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+
+import application.Utils.ImageHelper;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 public class HomePage extends StackPane {
@@ -18,6 +25,14 @@ public class HomePage extends StackPane {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+
+    ImageView img = new ImageView();
+    img.setImage(ImageHelper.createImage("https://static.hentai-gif-anime.com/upload/20160509/11/22350/detail.gif"));
+    this.getChildren().add(img);
+    
     managedProperty().bind(visibleProperty());
   }
+
+  // image Of Gif
+  
 }

@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -125,7 +126,7 @@ public class Main extends BorderPane {
 
     user_img.load("/images/user-avatar.png", 20);
     username.setText(user.getUserName());
-    signature.setText("acbxyz");
+    signature.setText("Id: " + user.getId().toString().substring(0, 10));
   }
 
   void openTab(int tab) {

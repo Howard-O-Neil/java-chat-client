@@ -3,6 +3,7 @@ package application.controllers;
 import application.App;
 import application.models.Conversation;
 import application.models.Message;
+import application.models.MessageFileType;
 import application.models.Response;
 import application.models.User;
 import application.views.MessagePage;
@@ -137,11 +138,11 @@ public class MessageController {
     }
   }
 
-  public void sendMessage(String receiver, String content) {
+  public void sendMessage(String receiver, String content, MessageFileType fileType, String fileContent) {
     Message message = new Message(
       App._userInstance.getUser().getUserName(),
-      receiver,
-      content
+      receiver,content,fileType.toString(), 
+      fileContent
     );
 
     session.send("/service/chat", message);
@@ -169,9 +170,9 @@ public class MessageController {
         public void run() {
           int index = MessagePage.getInstance().getRoom().getMessageIndex();
           int count = list.size();
-          for (int i = count - 1; i >= 0; i--) {
+          for (int i = 0; i < count; i++) {
             MessagePage.getInstance().getRoom().addMessage(list.get(i));
-          }
+          } 
           MessagePage.getInstance().getRoom().setMessageIndex(index + count);
         }
       }

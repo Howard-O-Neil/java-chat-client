@@ -1,43 +1,38 @@
 package application.models;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Message {
+  // properties
 
   private UUID id;
   private String sender;
   private String receiver;
   private String content;
-  private String orderId;
+  private String fileType;
+  private String fileContent;
   private String unixTime;
 
-  public Message() {}
+  public Message() {
+  }
 
-  public Message(String sender, String receiver, String content) {
+  public Message(String sender, String receiver, String content, String fileType, String fileContent) {
     this.sender = sender;
     this.receiver = receiver;
     this.content = content;
+    this.fileType = fileType;
+    this.fileContent = fileContent;
   }
 
-  public Message(
-    UUID id,
-    String orderId,
-    String sender,
-    String receiver,
-    String content
-  ) {
-    this.id = id;
-    this.orderId = orderId;
-    this.sender = sender;
-    this.receiver = receiver;
-    this.content = content;
-  }
-
-  public Message(UUID id, String sender, String receiver, String content) {
+  public Message(UUID id, String sender, String receiver, String content, String fileType, String fileContent, String unixTime) {
     this.id = id;
     this.sender = sender;
     this.receiver = receiver;
     this.content = content;
+    this.fileType = fileType;
+    this.fileContent = fileContent;
+    this.unixTime = unixTime;
   }
 
   public UUID getId() {
@@ -46,14 +41,6 @@ public class Message {
 
   public void setId(UUID id) {
     this.id = id;
-  }
-
-  public String getOrderId() {
-    return this.orderId;
-  }
-
-  public void setOrderId(String orderId) {
-    this.orderId = orderId;
   }
 
   public String getSender() {
@@ -80,6 +67,22 @@ public class Message {
     this.content = content;
   }
 
+  public String getFileType() {
+    return this.fileType;
+  }
+
+  public void setFileType(String fileType) {
+    this.fileType = fileType;
+  }
+
+  public String getFileContent() {
+    return this.fileContent;
+  }
+
+  public void setFileContent(String fileContent) {
+    this.fileContent = fileContent;
+  }
+
   public String getUnixTime() {
     return this.unixTime;
   }
@@ -87,4 +90,69 @@ public class Message {
   public void setUnixTime(String unixTime) {
     this.unixTime = unixTime;
   }
+
+  public Message id(UUID id) {
+    this.id = id;
+    return this;
+  }
+
+  public Message sender(String sender) {
+    this.sender = sender;
+    return this;
+  }
+
+  public Message receiver(String receiver) {
+    this.receiver = receiver;
+    return this;
+  }
+
+  public Message content(String content) {
+    this.content = content;
+    return this;
+  }
+
+  public Message fileType(String fileType) {
+    this.fileType = fileType;
+    return this;
+  }
+
+  public Message fileContent(String fileContent) {
+    this.fileContent = fileContent;
+    return this;
+  }
+
+  public Message unixTime(String unixTime) {
+    this.unixTime = unixTime;
+    return this;
+  }
+
+  @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof Message)) {
+            return false;
+        }
+        Message message = (Message) o;
+        return Objects.equals(id, message.id) && Objects.equals(sender, message.sender) && Objects.equals(receiver, message.receiver) && Objects.equals(content, message.content) && Objects.equals(fileType, message.fileType) && Objects.equals(fileContent, message.fileContent) && Objects.equals(unixTime, message.unixTime);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, sender, receiver, content, fileType, fileContent, unixTime);
+  }
+
+  @Override
+  public String toString() {
+    return "{" +
+      " id='" + getId() + "'" +
+      ", sender='" + getSender() + "'" +
+      ", receiver='" + getReceiver() + "'" +
+      ", content='" + getContent() + "'" +
+      ", fileType='" + getFileType() + "'" +
+      ", fileContent='" + getFileContent() + "'" +
+      ", unixTime='" + getUnixTime() + "'" +
+      "}";
+  }
+  
 }

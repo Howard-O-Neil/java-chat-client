@@ -35,9 +35,9 @@ public class ConversationController {
     Optional<Boolean> res = conversationService.AddConversation(conversation);
 
     if (res.isEmpty()) {
-      return new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR);
+      return ResponseHandler.error("");
     } else {
-      return new Response<Object>(res.get(), ErrorType.OK);
+      return ResponseHandler.ok(res.get());
     }
   }
 
@@ -50,12 +50,12 @@ public class ConversationController {
     );
 
     if (res.isEmpty()) {
-      return new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR);
+      return ResponseHandler.error("");
     } else {
       if (res.get()) {
         return AddConversation(conversation);
       } else {
-        return new Response<Object>("conversation not available", ErrorType.OK);
+        return ResponseHandler.createdConversation("");
       }
     }
   }
@@ -77,7 +77,7 @@ public class ConversationController {
     if (condition1.isEmpty() || condition2.isEmpty()) {
       this.simpMessagingTemplate.convertAndSend(
           String.format("/conversation/%s", conversation.getSender()),
-          new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR)
+          ResponseHandler.error("")        
         );
     } else {
       if (condition1.get() && condition2.get()) {
@@ -86,11 +86,11 @@ public class ConversationController {
 
         this.simpMessagingTemplate.convertAndSend(
             String.format("/conversation/%s", conversation.getSender()),
-            new Response<Object>(conversation, ErrorType.OK)
+            ResponseHandler.ok(conversation)
           );
         this.simpMessagingTemplate.convertAndSend(
             String.format("/conversation/%s", otherConversation.getSender()),
-            new Response<Object>(otherConversation, ErrorType.OK)
+            ResponseHandler.ok(otherConversation)
           );
       }
     }
@@ -105,12 +105,12 @@ public class ConversationController {
     );
 
     if (res.isEmpty()) {
-      return new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR);
+      return ResponseHandler.error("");
     } else {
       if (res.get()) {
-        return new Response<Object>(res.get(), ErrorType.OK);
+        return ResponseHandler.ok(res.get());
       } else {
-        return new Response<Object>("conversation not available", ErrorType.OK);
+        return ResponseHandler.createdConversation("");
       }
     }
   }
@@ -126,9 +126,9 @@ public class ConversationController {
     );
 
     if (res.isEmpty()) {
-      return new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR);
+      return ResponseHandler.error("");
     } else {
-      return new Response<Object>(res.get(), ErrorType.OK);
+      return ResponseHandler.ok(res.get());
     }
   }
 }

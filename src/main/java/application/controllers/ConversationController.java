@@ -45,6 +45,7 @@ public class ConversationController {
     SockJsClient sockJsClient = new SockJsClient(transports);
     WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
     stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+    
     StompSessionHandler sessionHandler = new StompSessionHandlerAdapter() {
       @Override
       public void afterConnected(

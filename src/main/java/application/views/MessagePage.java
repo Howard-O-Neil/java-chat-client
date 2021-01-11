@@ -45,6 +45,7 @@ public class MessagePage extends BorderPane {
     managedProperty().bind(visibleProperty());
 
     BooleanProperty firstTime = new SimpleBooleanProperty(true);
+    
     searchbar
       .focusedProperty()
       .addListener(

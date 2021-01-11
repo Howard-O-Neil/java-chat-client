@@ -3,12 +3,13 @@ package application.views;
 import application.App;
 import application.models.Message;
 import application.models.User;
-import java.io.IOException;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -22,84 +23,71 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
+import java.io.IOException;
+
 public class ChatRoom extends BorderPane {
 
-  @FXML
-  Label chatroom_name_label;
+    @FXML
+    Label chatroom_name_label;
+    @FXML
+    TextArea text_area;
+    @FXML
+    Rectangle setting_rect;
+    @FXML
+    Rectangle attachment_rect;
+    @FXML
+    Rectangle send_rect;
+    @FXML
+    ScrollPane chat_scrollpane;
+    @FXML
+    VBox chat_messages_vbox;
 
-  @FXML
-  TextArea text_area;
+    int messageIndex = 0;
+    int messageCount = 0;
 
-  @FXML
-  Rectangle setting_rect;
+    public ChatRoom(String name){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/chatroom.fxml"));
+        this.getStylesheets().add(App.class.getResource("/styles/chatroom_style.css").toExternalForm());
+        loader.setRoot(this);
+        loader.setController(this);
+        try{
+            loader.load();
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
 
-  @FXML
-  Rectangle attachment_rect;
+        send_rect.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+                    sendMessage();
+                }
+            }
+        });
 
-  @FXML
-  Rectangle send_rect;
+        chat_messages_vbox.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+                chat_messages_vbox.layout();
+                chat_scrollpane.setVvalue(1.0d);
+            }
+        });
 
-  @FXML
-  ScrollPane chat_scrollpane;
+        loadResource();
+        chatroom_name_label.setText(name);
 
-  @FXML
-  VBox chat_messages_vbox;
-
-  int messageIndex = 0;
-  int messageCount = 0;
-
-  public ChatRoom(String name) {
-    FXMLLoader loader = new FXMLLoader(
-      getClass().getResource("/views/chatroom.fxml")
-    );
-    this.getStylesheets()
-      .add(
-        App.class.getResource("/styles/chatroom_style.css").toExternalForm()
-      );
-    loader.setRoot(this);
-    loader.setController(this);
-    try {
-      loader.load();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    App._messageInstace.loadMessasgeFromConversation(name);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
-    send_rect.setOnMouseClicked(
-      new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent mouseEvent) {
-          if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-            sendMessage();
-          }
-        }
-      }
-    );
-
-    loadResource();
-    chatroom_name_label.setText(name);
-
-    new Thread(
-      new Runnable() {
-        @Override
-        public void run() {
-          try {
-            App._messageInstace.loadMessasgeFromConversation(name);
-            Platform.runLater(
-              new Runnable() {
-                @Override
-                public void run() {
-                  goToBottomScrollPane();
-                }
-              }
-            );
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-        }
-      }
-    )
-      .start();
-  }
 
   public int getMessageIndex() {
     return messageIndex;
@@ -154,23 +142,10 @@ public class ChatRoom extends BorderPane {
       msg.setAsSend();
       msg.setText(message.getContent());
       chat_messages_vbox.getChildren().add(msg);
-    } else {
+    } else{
       msg.setAsReceive();
       msg.setText(message.getContent());
       chat_messages_vbox.getChildren().add(msg);
     }
-    Platform.runLater(
-      new Runnable() {
-        @Override
-        public void run() {
-          goToBottomScrollPane();
-        }
-      }
-    );
-  }
-
-  public void goToBottomScrollPane() {
-    chat_messages_vbox.layout();
-    chat_scrollpane.setVvalue(1.0d);
   }
 }

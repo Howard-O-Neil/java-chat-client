@@ -27,9 +27,9 @@ public class UserController {
     Optional<Boolean> res = userService.AddUser(user);
 
     if (res.isEmpty()) {
-      return new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR);
+      return ResponseHandler.error("");
     } else {
-      return new Response<Object>(res.get(), ErrorType.OK);
+      return ResponseHandler.ok(res.get());
     }
   }
 
@@ -40,13 +40,13 @@ public class UserController {
     );
 
     if (isUserNameAvailable.isEmpty()) {
-      return new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR);
+      return ResponseHandler.error("");
       //
     } else {
       if (isUserNameAvailable.get()) {
         return AddUser(user);
       } else {
-        return new Response<Object>("username-not-available", ErrorType.OK);
+        return ResponseHandler.usernameNotAvailable("");
       }
     }
   }
@@ -58,12 +58,12 @@ public class UserController {
     Optional<Boolean> res = userService.CheckAvailableUserName(userName);
 
     if (res.isEmpty()) {
-      return new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR);
+      return ResponseHandler.error("");
     } else {
       if (res.get()) {
-        return new Response<Object>("available", ErrorType.OK);
+        return ResponseHandler.ok("available");
       } else {
-        return new Response<Object>("username-not-available", ErrorType.OK);
+        return ResponseHandler.usernameNotAvailable("");
       }
     }
   }
@@ -75,9 +75,9 @@ public class UserController {
     Optional<List<String>> res = userService.FindUser(searchKey);
 
     if (res.isEmpty()) {
-      return new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR);
+      return ResponseHandler.error("");
     } else {
-      return new Response<Object>(res.get(), ErrorType.OK);
+      return ResponseHandler.ok(res.get());
     }
   }
 
@@ -89,16 +89,16 @@ public class UserController {
     );
 
     if (check.isEmpty()) {
-      return new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR);
+      return ResponseHandler.error("");
     } else {
       if (!check.get()) {
         if (!user.getPassWord().equals(res.get().getPassWord())) {
-          return new Response<Object>("login-failed", ErrorType.OK);
+          return ResponseHandler.loginFailed("");
           //
-        } else return new Response<Object>(res.get(), ErrorType.OK);
+        } else return ResponseHandler.ok(res.get());
         //
       } else {
-        return new Response<Object>("login-failed", ErrorType.OK);
+        return ResponseHandler.loginFailed("");
       }
     }
   }
@@ -110,9 +110,9 @@ public class UserController {
     Optional<User> res = userService.GetUser(userName);
 
     if (res.isEmpty()) {
-      return new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR);
+      return ResponseHandler.error("");
     } else {
-      return new Response<Object>(res.get(), ErrorType.OK);
+      return ResponseHandler.ok(res.get());
     }
   }
 }

@@ -37,17 +37,17 @@ public class MessageController {
     if (res.isEmpty()) {
       simpMessagingTemplate.convertAndSend(
         String.format("/room/%s", message.getSender()),
-        new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR)
+        ResponseHandler.error("")
       );
     } else {
       simpMessagingTemplate.convertAndSend(
         String.format("/room/%s", message.getSender()),
-        new Response<Object>(message, ErrorType.OK)
+        ResponseHandler.ok(message)
       );
 
       simpMessagingTemplate.convertAndSend(
         String.format("/room/%s", message.getReceiver()),
-        new Response<Object>(message, ErrorType.OK)
+        ResponseHandler.ok(message)
       );
     }
   }
@@ -57,9 +57,9 @@ public class MessageController {
     Optional<Boolean> res = this.messageService.AddMessage(message);
 
     if (res.isEmpty()) {
-      return new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR);
+      return ResponseHandler.error("");
     } else {
-      return new Response<Object>("", ErrorType.OK);
+      return ResponseHandler.ok("test");
     }
   }
 
@@ -75,9 +75,9 @@ public class MessageController {
     );
 
     if (res.isEmpty()) {
-      return new Response<Object>("", ErrorType.INTERNAL_SERVER_ERROR);
+      return ResponseHandler.error("");
     } else {
-      return new Response<Object>(res.get(), ErrorType.OK);
+      return ResponseHandler.ok(res.get());
     }
   }
 }

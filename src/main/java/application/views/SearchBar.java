@@ -105,7 +105,7 @@ public class SearchBar extends TextField {
             String s,
             String s2
           ) {
-            if (getText().length() < 3) {
+            if (getText().length() < 1) {
               entriesPopup.hide();
             } else {
               GetEntriesThread thread = new GetEntriesThread();

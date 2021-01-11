@@ -5,19 +5,14 @@ import com.chat.Models.Conversation;
 import com.chat.Models.User;
 import com.chat.PropertyManager.DatabaseSupplier;
 import com.chat.Repository.IConversationDAO;
-import com.google.gson.Gson;
-import com.mongodb.client.FindIterable;
-import java.io.Console;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.propertyeditors.ZoneIdEditor;
 import org.springframework.stereotype.Service;
 
 @Service

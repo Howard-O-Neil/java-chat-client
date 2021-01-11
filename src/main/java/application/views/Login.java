@@ -106,7 +106,7 @@ public class Login extends StackPane {
         System.out.println("----------------------------------------");
         System.out.println(responseBody);
 
-        if (responseBody == null || responseBody.contains("login-failed")) {
+        if (responseBody.isEmpty() || responseBody.contains("login-failed")) {
           Platform.runLater(failed);
         } else {
           Response<User> response = gson.fromJson(
@@ -210,7 +210,7 @@ public class Login extends StackPane {
         System.out.println("----------------------------------------");
         System.out.println(responseBody);
 
-        if (responseBody == null || responseBody.contains("login-failed")) {
+        if (responseBody.isEmpty() || responseBody.contains("login-failed")) {
           Platform.runLater(failed);
         } else {
           Response<Boolean> response = gson.fromJson(

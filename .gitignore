@@ -1,5 +1,8 @@
-target/
-Backend/data/*
-Backend/logs/*
-Backend/target
-Backend/client/*
+target/*
+bin/*
+Backend/Database/data/*
+Backend/CDNServer/log/*
+Backend/CDNServer/database/*
+Backend/JavaBackend/logs/*
+Backend/JavaBackend/target/*
+Backend/JavaBackend/bin/*

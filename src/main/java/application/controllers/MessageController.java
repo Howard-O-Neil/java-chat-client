@@ -1,7 +1,6 @@
 package application.controllers;
 
 import application.App;
-import application.models.Conversation;
 import application.models.Message;
 import application.models.MessageFileType;
 import application.models.Response;

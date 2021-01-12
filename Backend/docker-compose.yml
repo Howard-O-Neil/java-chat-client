@@ -9,7 +9,7 @@ services:
       - "8283:27017"
       - "8284:28017"
     volumes:
-      - ./data:/data/db
+      - ./Database/data:/data/db
     networks:
       chat_net:
         ipv4_address: 10.1.2.2
@@ -17,17 +17,31 @@ services:
     container_name: "chatservice"
     depends_on:
       - chat-dtb
+      - chat-cdn
     build:
-      context: ./
+      context: ./JavaBackend
       dockerfile: dockerfile.javadev
     restart: always
     ports:
       - "8081:8002"
     volumes:
-      - ./:/app
+      - ./JavaBackend:/app
     networks:
       chat_net:
         ipv4_address: 10.1.2.3
+  chat-cdn:
+    container_name: "chatcdn"
+    build:
+      context: ./CDNServer
+      dockerfile: dockerfile.cdn
+    ports:
+      - "8082:8888"
+    volumes:
+      - ./CDNServer:/app/Backend/CDNServer
+      - ./CDNServer/go.mod:/app/Backend/CDNServer/go.mod
+    networks:
+      chat_net:
+        ipv4_address: 10.1.2.4
 
 networks:
   chat_net:

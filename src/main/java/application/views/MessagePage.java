@@ -3,7 +3,6 @@ package application.views;
 import application.App;
 import application.models.Conversation;
 import java.io.IOException;
-import java.util.concurrent.FutureTask;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;

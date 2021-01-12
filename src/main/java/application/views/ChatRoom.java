@@ -16,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -33,6 +34,14 @@ public class ChatRoom extends BorderPane {
   @FXML
   Rectangle attachment_rect;
   @FXML
+  Rectangle imageBtn;
+  @FXML
+  Rectangle gifBtn;
+  @FXML
+  Rectangle fileBtn;
+  @FXML
+  HBox addOnPanel;
+  @FXML
   Rectangle send_rect;
   @FXML
   ScrollPane chat_scrollpane;
@@ -41,6 +50,7 @@ public class ChatRoom extends BorderPane {
 
   int messageIndex = 0;
   int messageCount = 0;
+  boolean isLoading = false;
 
   public ChatRoom(String name) {
     FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/chatroom.fxml"));
@@ -54,13 +64,34 @@ public class ChatRoom extends BorderPane {
     }
     
     // set property
+    addOnPanel.managedProperty().bind(addOnPanel.visibleProperty());
+    addOnPanel.setVisible(false);
+    
     chat_scrollpane.setContent(chat_messages_vbox);
-    chat_messages_vbox.setOnScroll(e -> {
-      double deltaY = e.getDeltaY()*2; 
+    chat_scrollpane.fitToHeightProperty().set(true);
+
+    chat_messages_vbox.setOnScroll(event -> {
+      // speed up scroll speed
+      double deltaY = event.getDeltaY() * 0.2; 
       double width = chat_scrollpane.getContent().getBoundsInLocal().getWidth();
       double vvalue = chat_scrollpane.getVvalue();
-      chat_scrollpane.setVvalue(vvalue + -deltaY/width);
+      chat_scrollpane.setVvalue(vvalue + -deltaY/width); 
+
+      // scroll to top
+      if (chat_scrollpane.getVvalue() <= 0.001) {
+        if (!isLoading) {
+          this.isLoading = true;
+          App.executor.execute(() -> {
+            try {
+              App._messageInstace.loadMessasgeFromConversation(name);
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          });
+        }
+      }
     });
+
     // ======================
 
     send_rect.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -69,14 +100,6 @@ public class ChatRoom extends BorderPane {
         if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
           sendMessage();
         }
-      }
-    });
-
-    chat_messages_vbox.heightProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-        chat_messages_vbox.layout();
-        chat_scrollpane.setVvalue(1.0d);
       }
     });
 
@@ -92,12 +115,20 @@ public class ChatRoom extends BorderPane {
     });
   }
 
+  public void setIsLoading(boolean value) {
+    this.isLoading = value;
+  }
+
   public int getMessageIndex() {
     return messageIndex;
   }
 
   public void setMessageIndex(int i) {
     messageIndex = i;
+  }
+
+  public void scrollToBottom() {
+    chat_scrollpane.setVvalue(1.0);
   }
 
   public int getMessageCount() {
@@ -117,6 +148,15 @@ public class ChatRoom extends BorderPane {
 
     Image sendImg = new Image("/images/send-icon.png");
     send_rect.setFill(new ImagePattern(sendImg));
+
+    Image gifIcon = new Image("/images/gif-icon.png");
+    gifBtn.setFill(new ImagePattern(gifIcon));
+
+    Image imgIcon = new Image("/images/image-icon.png");
+    imageBtn.setFill(new ImagePattern(imgIcon));
+
+    Image fileIcon = new Image("/images/file-icon.png");
+    fileBtn.setFill(new ImagePattern(fileIcon));
     // sample text msg
   }
 
@@ -144,6 +184,10 @@ public class ChatRoom extends BorderPane {
       msg.setText(message.getContent());
       chat_messages_vbox.getChildren().add(0, msg);
     }
+
+    if (messageIndex <= 15) {
+      scrollToBottom();
+    }
   }
 
   public void addLastMessage(Message message) {
@@ -159,5 +203,6 @@ public class ChatRoom extends BorderPane {
       msg.setText(message.getContent());
       chat_messages_vbox.getChildren().add(msg);
     }
+    scrollToBottom();
   }
 }

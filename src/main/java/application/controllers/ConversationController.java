@@ -35,7 +35,7 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 public class ConversationController {
 
-  StompSession session;
+  public StompSession session;
 
   void connectAndSubcribe() throws Exception {
     WebSocketClient simpleWebSocketClient = new StandardWebSocketClient();

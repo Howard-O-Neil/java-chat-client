@@ -16,6 +16,7 @@ public class App extends javafx.application.Application {
 
   // public static String apiUrl = "http://larryjason.com:8081/api/";
   // public static String messageSocketUrl ="ws://larryjason.com:8081/socket-service/";
+  static public String cdnUrl = "http://localhost:8082/";
   static public String apiUrl = "http://localhost:8081/api/";
   static public String messageSocketUrl = "ws://localhost:8081/socket-service/";
 
@@ -31,6 +32,8 @@ public class App extends javafx.application.Application {
 
     primaryStage.setOnCloseRequest(e -> {
       App.executor.shutdown();
+      _messageInstace.session.disconnect();
+      _conversationInstance.session.disconnect();
     });
 
     primaryStage.setTitle("App");

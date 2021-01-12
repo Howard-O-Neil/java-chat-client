@@ -31,7 +31,7 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 public class MessageController {
 
-  StompSession session;
+  public StompSession session;
 
   void connectAndSubcribe() throws Exception {
     WebSocketClient simpleWebSocketClient = new StandardWebSocketClient();
@@ -173,6 +173,7 @@ public class MessageController {
             MessagePage.getInstance().getRoom().addMessage(list.get(i));
           } 
           MessagePage.getInstance().getRoom().setMessageIndex(index + count);
+          MessagePage.getInstance().getRoom().setIsLoading(false);
         }
       }
     );

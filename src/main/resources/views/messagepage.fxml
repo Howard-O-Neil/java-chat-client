@@ -26,7 +26,7 @@
                 <VBox fx:id="conversation_vbox" fillWidth="true" styleClass="conversation-vbox" />
             </ScrollPane>
             <Button fx:id="start_conversation_button" styleClass="start-btn" text="Start conversation">
-                <VBox.margin><Insets topRightBottomLeft="10" /></VBox.margin>
+                <VBox.margin><Insets topRightBottomLeft="12" /></VBox.margin>
             </Button>
         </VBox>
     </left>

@@ -32,8 +32,12 @@ public class App extends javafx.application.Application {
 
     primaryStage.setOnCloseRequest(e -> {
       App.executor.shutdown();
-      _messageInstace.session.disconnect();
-      _conversationInstance.session.disconnect();
+
+      if (_messageInstace.session != null)
+        _messageInstace.session.disconnect();
+      
+      if (_conversationInstance.session != null)
+        _conversationInstance.session.disconnect();
     });
 
     primaryStage.setTitle("App");

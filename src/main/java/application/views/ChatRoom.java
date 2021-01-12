@@ -1,10 +1,12 @@
 package application.views;
 
 import application.App;
+import application.Utils.TimerHelper;
 import application.models.Message;
 import application.models.MessageFileType;
 import application.models.User;
 import javafx.event.EventHandler;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -66,13 +68,16 @@ public class ChatRoom extends BorderPane {
     // set property
     addOnPanel.managedProperty().bind(addOnPanel.visibleProperty());
     addOnPanel.setVisible(false);
+
+    attachment_rect.setOnMouseClicked(e -> {
+      addOnPanel.setVisible(!addOnPanel.isVisible());
+    });
     
     chat_scrollpane.setContent(chat_messages_vbox);
-    chat_scrollpane.fitToHeightProperty().set(true);
 
     chat_messages_vbox.setOnScroll(event -> {
       // speed up scroll speed
-      double deltaY = event.getDeltaY() * 0.2; 
+      double deltaY = event.getDeltaY() * 0.25; 
       double width = chat_scrollpane.getContent().getBoundsInLocal().getWidth();
       double vvalue = chat_scrollpane.getVvalue();
       chat_scrollpane.setVvalue(vvalue + -deltaY/width); 
@@ -94,14 +99,10 @@ public class ChatRoom extends BorderPane {
 
     // ======================
 
-    send_rect.setOnMouseClicked(new EventHandler<MouseEvent>() {
-      @Override
-      public void handle(MouseEvent mouseEvent) {
-        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-          sendMessage();
-        }
-      }
-    });
+    send_rect.setOnMouseClicked(mouseEvent -> {
+      if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+        sendMessage();
+      }});
 
     loadResource();
     chatroom_name_label.setText(name);
@@ -128,7 +129,11 @@ public class ChatRoom extends BorderPane {
   }
 
   public void scrollToBottom() {
-    chat_scrollpane.setVvalue(1.0);
+    chat_scrollpane.setVvalue(1.0d);
+  }
+
+  public void scrollDown() {
+    chat_scrollpane.setVvalue(chat_scrollpane.getVvalue() + 0.025d);
   }
 
   public int getMessageCount() {
@@ -186,8 +191,10 @@ public class ChatRoom extends BorderPane {
     }
 
     if (messageIndex <= 15) {
-      scrollToBottom();
-    }
+      TimerHelper.executeOnceAfter(() -> {
+        scrollToBottom();
+      }, 200);
+    } else scrollDown();
   }
 
   public void addLastMessage(Message message) {
@@ -203,6 +210,9 @@ public class ChatRoom extends BorderPane {
       msg.setText(message.getContent());
       chat_messages_vbox.getChildren().add(msg);
     }
-    scrollToBottom();
+
+    TimerHelper.executeOnceAfter(() -> {
+      scrollToBottom();
+    }, 200);
   }
 }

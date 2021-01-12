@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+import application.App;
 import application.Utils.ImageHelper;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,12 +27,17 @@ public class HomePage extends StackPane {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-
-    ImageView img = new ImageView();
-    img.setImage(ImageHelper.createImage("https://i.giphy.com/media/xT0GqetcAXDkrGkire/source.gif"));
-    this.getChildren().add(img);
-    
     managedProperty().bind(visibleProperty());
+
+    App.executor.execute(() -> {
+      ImageView img = new ImageView();
+      img.setImage(ImageHelper.createImage("https://i.giphy.com/media/xT0GqetcAXDkrGkire/source.gif"));
+
+      Platform.runLater(() -> {
+        this.getChildren().clear();
+        this.getChildren().add(img);
+      });
+    });
   }
 
   // image Of Gif

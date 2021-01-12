@@ -22,7 +22,7 @@ public class App extends javafx.application.Application {
   public static final UserController _userInstance = new UserController();
   public static final MessageController _messageInstace = new MessageController();
   public static final ConversationController _conversationInstance = new ConversationController();
-  public static final ExecutorService executor = Executors.newFixedThreadPool(5);
+  public static final ExecutorService executor = Executors.newFixedThreadPool(10);
 
   @Override
   public void start(Stage primaryStage) throws Exception {

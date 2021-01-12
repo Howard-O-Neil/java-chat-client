@@ -1,26 +1,25 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.shape.Circle?>
-<fx:root
-  xmlns="http://javafx.com/javafx"
-  xmlns:fx="http://javafx.com/fxml"
-  type="javafx.scene.layout.GridPane"
-  hgap="10"
->
-    <padding><Insets left="4" right="4" /></padding>
-    <Label
-    fx:id="text_label"
-    text="text"
-    maxWidth="360"
-    wrapText="true"
-    GridPane.columnIndex="1"
-    GridPane.rowIndex="0"
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.TextFlow?>
+
+
+<fx:root hgap="10.0" type="GridPane"
+  xmlns="http://javafx.com/javafx/11.0.1"
+  xmlns:fx="http://javafx.com/fxml/1"
   >
-        <padding><Insets topRightBottomLeft="8" /></padding>
+  <padding>
+    <Insets left="4" right="4" />
+  </padding>
+  <TextFlow fx:id="text_flow">
+    <Label fx:id="text_label" maxHeight="1.7976931348623157E308" maxWidth="360.0" text="Label" wrapText="true" >
+      <padding>
+        <Insets topRightBottomLeft="8" />
+      </padding>
     </Label>
+  </TextFlow>
 </fx:root>

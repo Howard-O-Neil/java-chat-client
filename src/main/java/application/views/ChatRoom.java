@@ -59,7 +59,7 @@ public class ChatRoom extends BorderPane {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-
+    
     // set property
     chat_scrollpane.setContent(chat_messages_vbox);
     chat_messages_vbox.setOnScroll(e -> {

@@ -10,8 +10,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.TextFlow;
 
 public class MessageText extends GridPane {
+
+  @FXML
+  TextFlow text_flow;
 
   @FXML
   Label text_label;

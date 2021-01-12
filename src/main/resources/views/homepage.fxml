@@ -10,5 +10,5 @@
   type="javafx.scene.layout.StackPane"
 >
 
-    <Label text="this is home" />
+    <Label text="Loading...." />
 </fx:root>

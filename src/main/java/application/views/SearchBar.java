@@ -1,6 +1,7 @@
 package application.views;
 
 import application.App;
+import application.Utils.HttpClientHelper;
 import application.models.Response;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -8,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.Future;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,11 +20,8 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.util.EntityUtils;
 
 public class SearchBar extends TextField {
@@ -50,15 +47,10 @@ public class SearchBar extends TextField {
     };
 
     void getEntriesFromApi() throws Exception {
-      CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
-      try {
-        client.start();
-        HttpGet request = new HttpGet(
+      HttpGet request = new HttpGet(
           App.apiUrl + "user/find?searchkey=" + getText()
         );
-
-        Future<HttpResponse> future = client.execute(request, null);
-        HttpResponse httpResponse = future.get();
+      HttpClientHelper.start(request, httpResponse -> {
         String responseBody;
         int status = httpResponse.getStatusLine().getStatusCode();
         if (status >= 200 && status < 300) {
@@ -80,9 +72,7 @@ public class SearchBar extends TextField {
         entries.addAll(response.getData());
 
         Platform.runLater(updateEntries);
-      } finally {
-        client.close();
-      }
+      });
     }
   }
 

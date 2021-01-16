@@ -1,20 +1,13 @@
 package application.controllers;
 
-import java.util.List;
-import java.util.concurrent.Future;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.util.EntityUtils;
 
 import application.App;
+import application.Utils.HttpClientHelper;
+import application.Utils.IConsumer2;
 import application.models.Response;
 import application.models.User;
 import application.views.ConversationCell;
@@ -27,14 +20,9 @@ public class UserController {
     return user;
   }
 
-  private User requestUser(String username) throws Exception {
-    CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
-    try {
-      client.start();
-      HttpGet request = new HttpGet(App.apiUrl + "user/get?username=" + username);
-
-      Future<HttpResponse> future = client.execute(request, null);
-      HttpResponse httpResponse = future.get();
+  private void requestUser(String username, IConsumer2<User> consumer) throws Exception {
+    HttpGet request = new HttpGet(App.apiUrl + "user/get?username=" + username);
+    HttpClientHelper.start(request, httpResponse -> {
       String responseBody;
       int status = httpResponse.getStatusLine().getStatusCode();
       if (status >= 200 && status < 300) {
@@ -47,24 +35,17 @@ public class UserController {
       }
       System.out.println("----------------------------------------");
       System.out.println(responseBody);
-      
-      Gson gson = new Gson();
-      Response<User> response = gson.fromJson(
-        responseBody,
-        new TypeToken<Response<User>>() {}.getType()
-      );
 
-      return response.getData();
-    } finally {
-      client.close();
-    }
+      var response = new GenericParser<Response<User>>(){}.parse(responseBody);
+      consumer.run(response.getData());
+    });
   }
 
   public void requestConversationSignature(String username, ConversationCell conversationCell) throws Exception {
-    User user = requestUser(username);
-
-    Platform.runLater(() -> {
-      conversationCell.setSignature("Id: " + user.getId().toString().substring(0, 10));
+    requestUser(username, user -> {
+      Platform.runLater(() -> {
+        conversationCell.setSignature("Id: " + user.getId().toString().substring(0, 10));
+      });
     });
   }
 

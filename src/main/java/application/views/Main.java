@@ -43,7 +43,15 @@ public class Main extends BorderPane {
   @FXML
   Button post_btn;
 
+  private static Main _Instance;
+
+  public static Main getInstance() {
+    return _Instance;
+  }
+
   public Main() {
+    _Instance = this;
+
     FXMLLoader loader = new FXMLLoader(
       getClass().getResource("/views/main.fxml")
     );
@@ -120,6 +128,8 @@ public class Main extends BorderPane {
     openTab(1);
     loadUser();
   }
+
+  
 
   void loadUser() {
     User user = App._userInstance.getUser();

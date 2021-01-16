@@ -1,13 +1,13 @@
 package application.controllers;
 
 import application.App;
+import application.Utils.HttpClientHelper;
+import application.Utils.IConsumer2;
 import application.models.Message;
 import application.models.MessageFileType;
 import application.models.Response;
 import application.models.User;
 import application.views.MessagePage;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +17,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.*;
@@ -60,13 +58,9 @@ public class MessageController {
               System.out.println("-----------------------------------------");
               System.out.println("Receive from server:");
               try {
-                Gson gson = new Gson();
-                String json = gson.toJson(payload);
-                System.out.println(json);
-                Response<Message> response = gson.fromJson(
-                  json,
-                  new TypeToken<Response<Message>>() {}.getType()
-                );
+                var response = new GenericParser<Response<Message>>(){}
+                  .parse(payload);
+      
                 Message message = response.getData();
                 if (response.getStatus() != 200) return;
                 Platform.runLater(
@@ -96,23 +90,15 @@ public class MessageController {
     session = stompClient.connect(App.messageSocketUrl, sessionHandler).get();
   }
 
-  private List<Message> getMessage(String sender, String receiver)
-    throws Exception {
-    CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
-    try {
-      client.start();
-      HttpGet request = new HttpGet(
-        App.apiUrl +
-        "message/get?sender=" +
-        sender +
-        "&receiver=" +
-        receiver +
-        "&index=" +
-        MessagePage.getInstance().getRoom().getMessageIndex()
-      );
-
-      Future<HttpResponse> future = client.execute(request, null);
-      HttpResponse httpResponse = future.get();
+  private void getMessage(String sender, String receiver, 
+    IConsumer2<List<Message>> consumer) throws Exception {
+    //
+    HttpGet request = new HttpGet(App.apiUrl +
+      "message/get?sender=" + sender +
+      "&receiver=" + receiver +
+      "&index=" + MessagePage.getInstance().getRoom().getMessageIndex()
+    );
+    HttpClientHelper.start(request, httpResponse -> {
       String responseBody;
       int status = httpResponse.getStatusLine().getStatusCode();
       if (status >= 200 && status < 300) {
@@ -123,18 +109,16 @@ public class MessageController {
           "Unexpected response status: " + status
         );
       }
-      System.out.println("----------------------------------------");
-      System.out.println(responseBody);
-      Gson gson = new Gson();
-      Response<List<Message>> response = gson.fromJson(
-        responseBody,
-        new TypeToken<Response<List<Message>>>() {}.getType()
-      );
 
-      return response.getData();
-    } finally {
-      client.close();
-    }
+      var response = new GenericParser<Response<List<Message>>>(){}
+        .parse(responseBody);
+
+      System.out.println("----------------------------------------");
+      System.out.println(response.getData().size());
+      System.out.println(response.toString());
+
+      consumer.run(response.getData());
+    });
   }
 
   public void sendMessage(String receiver, String content, MessageFileType fileType, String fileContent) {
@@ -161,22 +145,27 @@ public class MessageController {
   public void loadMessasgeFromConversation(String receiver) throws Exception {
     User user = App._userInstance.getUser();
 
-    List<Message> list = getMessage(user.getUserName(), receiver);
-
-    Platform.runLater(
-      new Runnable() {
-        @Override
-        public void run() {
-          int index = MessagePage.getInstance().getRoom().getMessageIndex();
-          int count = list.size();
-          for (int i = 0; i < count; i++) {
-            MessagePage.getInstance().getRoom().addMessage(list.get(i));
-          } 
-          MessagePage.getInstance().getRoom().setMessageIndex(index + count);
-          MessagePage.getInstance().getRoom().setIsLoading(false);
+    getMessage(user.getUserName(), receiver, list -> {
+      Platform.runLater(
+        new Runnable() {
+          @Override
+          public void run() {
+            int index = MessagePage.getInstance().getRoom().getMessageIndex();
+            int count = list.size();
+            for (int i = 0; i < count; i++) {
+              MessagePage.getInstance().getRoom().addMessage(list.get(i));
+            } 
+            if (count >= 15) {
+              MessagePage.getInstance().getRoom().setLoadMoreVisibility(true);
+            } else {
+              MessagePage.getInstance().getRoom().setLoadMoreVisibility(false);
+            }
+            MessagePage.getInstance().getRoom().setMessageIndex(index + count);
+            MessagePage.getInstance().getRoom().setIsLoading(false);
+          }
         }
-      }
-    );
+      );
+    });
   }
 
   public void loadMessage() throws Exception {

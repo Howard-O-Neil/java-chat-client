@@ -1,6 +1,7 @@
 package application.views;
 
 import application.App;
+import application.Utils.HttpClientHelper;
 import application.controllers.AlertDialog;
 import application.models.Response;
 import application.models.User;
@@ -22,12 +23,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.util.EntityUtils;
 
 public class Login extends StackPane {
@@ -78,21 +76,16 @@ public class Login extends StackPane {
     void login() throws Exception {
       User user = new User(username.getText(), password.getText());
 
-      CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
-      try {
-        client.start();
+      HttpPost request = new HttpPost(App.apiUrl + "user/checklogin");
+      request.setHeader("Accept", "application/json");
+      request.setHeader("Content-type", "application/json");
 
-        HttpPost request = new HttpPost(App.apiUrl + "user/checklogin");
-        request.setHeader("Accept", "application/json");
-        request.setHeader("Content-type", "application/json");
+      Gson gson = new Gson();
+      String json = gson.toJson(user);
+      StringEntity stringEntity = new StringEntity(json);
+      request.setEntity(stringEntity);
 
-        Gson gson = new Gson();
-        String json = gson.toJson(user);
-        StringEntity stringEntity = new StringEntity(json);
-        request.setEntity(stringEntity);
-
-        Future<HttpResponse> future = client.execute(request, null);
-        HttpResponse httpResponse = future.get();
+      HttpClientHelper.start(request, httpResponse -> {
         String responseBody;
         int status = httpResponse.getStatusLine().getStatusCode();
         if (status >= 200 && status < 300) {
@@ -117,10 +110,7 @@ public class Login extends StackPane {
 
           Platform.runLater(success);
         }
-      } finally {
-        client.close();
-      }
-
+      });
       progessing = false;
     }
   }
@@ -182,21 +172,16 @@ public class Login extends StackPane {
         signup_password.getText()
       );
 
-      CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
-      try {
-        client.start();
+      HttpPost request = new HttpPost(App.apiUrl + "user/add");
+      request.setHeader("Accept", "application/json");
+      request.setHeader("Content-type", "application/json");
 
-        HttpPost request = new HttpPost(App.apiUrl + "user/add");
-        request.setHeader("Accept", "application/json");
-        request.setHeader("Content-type", "application/json");
+      Gson gson = new Gson();
+      String json = gson.toJson(user);
+      StringEntity stringEntity = new StringEntity(json);
+      request.setEntity(stringEntity);
 
-        Gson gson = new Gson();
-        String json = gson.toJson(user);
-        StringEntity stringEntity = new StringEntity(json);
-        request.setEntity(stringEntity);
-
-        Future<HttpResponse> future = client.execute(request, null);
-        HttpResponse httpResponse = future.get();
+      HttpClientHelper.start(request, httpResponse -> {
         String responseBody;
         int status = httpResponse.getStatusLine().getStatusCode();
         if (status >= 200 && status < 300) {
@@ -223,10 +208,7 @@ public class Login extends StackPane {
             Platform.runLater(failed);
           }
         }
-      } finally {
-        client.close();
-      }
-
+      });
       progessing = false;
     }
   }

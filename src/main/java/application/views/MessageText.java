@@ -40,10 +40,11 @@ public class MessageText extends GridPane {
     }
   }
 
-  public void setAsFileDisplay() {
+  public void setAsImageDisplay(String url) {
     this.getChildren().clear();
     
-    imgView = new ImageView();
+    this.imgView = new ImageView();
+    this.imgView.setImage(ImageHelper.createImage(url));
     this.add(imgView, 1, 0);
   }
 
@@ -57,10 +58,6 @@ public class MessageText extends GridPane {
     this.setAlignment(Pos.BASELINE_LEFT);
     text_label.getStyleClass().clear();
     text_label.getStyleClass().add("msg-text-receive");
-  }
-
-  public void setImgOrGif(String url) {
-    this.imgView.setImage(ImageHelper.createImage(url));
   }
 
   public void setText(String text) {

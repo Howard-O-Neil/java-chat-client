@@ -6,7 +6,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import application.App;
-import application.Utils.ImageHelper;
+import application.Utils.MediaHelper;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
@@ -31,7 +31,7 @@ public class HomePage extends StackPane {
 
     App.executor.execute(() -> {
       ImageView img = new ImageView();
-      img.setImage(ImageHelper.createImage("https://i.giphy.com/media/xT0GqetcAXDkrGkire/source.gif"));
+      img.setImage(MediaHelper.createImage("https://i.giphy.com/media/xT0GqetcAXDkrGkire/source.gif"));
 
       Platform.runLater(() -> {
         this.getChildren().clear();

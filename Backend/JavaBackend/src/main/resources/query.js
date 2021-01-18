@@ -1,5 +1,9 @@
 DBQuery.shellBatchSize = 10000;
 
+// Messaage Index
+db.message.createIndex({ sender: 1, receiver: 1 });
+db.conversation.createIndex({sender: 1});
+// Conversation Index
 
 
 db.user.find();

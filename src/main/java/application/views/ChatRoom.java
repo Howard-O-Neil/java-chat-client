@@ -8,19 +8,27 @@ import application.models.MessageFileType;
 import application.models.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.io.IOException;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
 
 public class ChatRoom extends BorderPane {
 
@@ -55,6 +63,8 @@ public class ChatRoom extends BorderPane {
   int messageCount = 0;
   boolean isLoading = false;
 
+  GifPicker gifPicker = null;
+
   public ChatRoom(String name) {
     FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/chatroom.fxml"));
     this.getStylesheets().add(App.class.getResource("/styles/chatroom_style.css").toExternalForm());
@@ -65,20 +75,34 @@ public class ChatRoom extends BorderPane {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    
+
     // set property
+    Main.getInstance().addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
+      if (gifPicker != null) {
+        if (!inHierarchy(evt.getPickResult().getIntersectedNode(), gifPicker)) {
+          disolveGifPicker();
+        }
+      }
+    });
+
     chat_messages_loadmore.managedProperty().bind(chat_messages_loadmore.visibleProperty());
     addOnPanel.managedProperty().bind(addOnPanel.visibleProperty());
     addOnPanel.setVisible(false);
 
     attachment_rect.setOnMouseClicked(e -> {
       addOnPanel.setVisible(!addOnPanel.isVisible());
+
+      Image attachmentImg = new Image("/images/attachment-icon.png");
+      Image cancelImg = new Image("/images/cancel-icon.png");
+
+      if (addOnPanel.isVisible()) {
+        attachment_rect.setFill(new ImagePattern(cancelImg));
+      } else {
+        attachment_rect.setFill(new ImagePattern(attachmentImg));
+      }
     });
 
     chat_messages_loadmore.setOnMouseClicked(e -> {
-      try {FormHelper.test();}
-      catch (Exception ex) {ex.printStackTrace();}
-
       if (!isLoading) {
         this.isLoading = true;
         App.executor.execute(() -> {
@@ -90,7 +114,7 @@ public class ChatRoom extends BorderPane {
         });
       }
     });
-    
+
     chat_scrollpane.setContent(scrollpane_content);
     // chat_scrollpane.vvalueProperty().bind(chat_scrollpane.heightProperty());
     // ======================
@@ -98,7 +122,8 @@ public class ChatRoom extends BorderPane {
     send_rect.setOnMouseClicked(mouseEvent -> {
       if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
         sendMessage();
-      }});
+      }
+    });
 
     loadResource();
     chatroom_name_label.setText(name);
@@ -110,6 +135,10 @@ public class ChatRoom extends BorderPane {
         e.printStackTrace();
       }
     });
+  }
+
+  public GifPicker getGifPicker() {
+    return gifPicker;
   }
 
   public void setIsLoading(boolean value) {
@@ -157,18 +186,90 @@ public class ChatRoom extends BorderPane {
 
     Image gifIcon = new Image("/images/gif-icon.png");
     gifBtn.setFill(new ImagePattern(gifIcon));
-
     gifBtn.setOnMouseClicked(event -> {
-      System.out.println("fuck");
-      Main.getInstance().getChildren().add(new GifPicker());
+      createGifPicker();
     });
 
     Image imgIcon = new Image("/images/image-icon.png");
     imageBtn.setFill(new ImagePattern(imgIcon));
+    imageBtn.setOnMouseClicked(event -> {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("png", "*.png"),
+          new FileChooser.ExtensionFilter("jpg", "*.jpg"), new FileChooser.ExtensionFilter("PNG", "*.PNG"),
+          new FileChooser.ExtensionFilter("JPG", "*.JPG"));
+
+      File selectedFile = fileChooser.showOpenDialog(App._primaryStage);
+
+      try {
+        FormHelper.submitData(selectedFile, httpResponse -> {
+          HttpEntity entity = httpResponse.getEntity();
+          String responseBody = entity != null ? EntityUtils.toString(entity) : null;
+
+          sendImage(responseBody.split("\"")[3]);
+        });
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    });
 
     Image fileIcon = new Image("/images/file-icon.png");
     fileBtn.setFill(new ImagePattern(fileIcon));
+    fileBtn.setOnMouseClicked(event -> {
+      FileChooser fileChooser = new FileChooser();
+      File selectedFile = fileChooser.showOpenDialog(App._primaryStage);
+
+      try {
+        FormHelper.submitData(selectedFile, httpResponse -> {
+          HttpEntity entity = httpResponse.getEntity();
+          String responseBody = entity != null ? EntityUtils.toString(entity) : null;
+
+          sendFile(selectedFile.getName(), responseBody.split("\"")[3]);
+        });
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    });
     // sample text msg
+  }
+
+  public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
+    if (potentialHierarchyElement == null) {
+      return true;
+    }
+    while (node != null) {
+      if (node == potentialHierarchyElement) {
+        return true;
+      }
+      node = node.getParent();
+    }
+    return false;
+  }
+
+
+  void createGifPicker() {
+    if (this.gifPicker != null) {
+      disolveGifPicker();
+      return;
+    }
+    
+    this.gifPicker = new GifPicker();
+    gifPicker.setLayoutX(gifBtn.getLayoutX() + 400);
+    gifPicker.setLayoutY(gifBtn.getLayoutY() + 100);
+
+    Main.getInstance().getChildren().add(gifPicker);
+
+    App._gifInstance.loadGif();
+    // Main.getInstance().setDisable(true);
+  }
+
+  void disolveGifPicker() {
+    if (gifPicker == null)
+      return;
+
+    Main.getInstance().getChildren().remove(gifPicker);
+    gifPicker = null;
   }
 
   void sendMessage() {
@@ -182,17 +283,50 @@ public class ChatRoom extends BorderPane {
     });
   }
 
+  void sendImage(String fileName) {
+    App.executor.execute(() -> {
+      App._messageInstace.sendMessage(chatroom_name_label.getText(), 
+        "", MessageFileType.IMAGE, fileName);
+    });
+  }
+
+  void sendGif(String gifId) {
+    App.executor.execute(() -> {
+      App._messageInstace.sendMessage(chatroom_name_label.getText(), 
+        "", MessageFileType.GIF, gifId);
+    });
+  }
+
+  void sendFile(String filename, String cdnName) {
+    App.executor.execute(() -> {
+      App._messageInstace.sendMessage(chatroom_name_label.getText(), 
+        filename, MessageFileType.FILE, cdnName);
+    });
+  }
+
+  private void updateFileType(MessageText msg, Message message) {
+    if (message.getFileType().equals(MessageFileType.GIF.toString())) {
+      msg.setAsGifDisplay(message.getFileContent());
+    } else if (message.getFileType().equals(MessageFileType.IMAGE.toString())) {
+      msg.setAsImageDisplay(message.getFileContent());
+    } else if (message.getFileType().equals(MessageFileType.FILE.toString())) {
+      msg.setAsFileDisplay(message.getContent(), message.getFileContent());
+    } else {
+      msg.setText(message.getContent());
+    }
+  }
+
   public void addMessage(Message message) {
     User user = App._userInstance.getUser();
     MessageText msg = new MessageText();
 
     if (message.getSender().equals(user.getUserName())) {
       msg.setAsSend();
-      msg.setText(message.getContent());
+      updateFileType(msg, message);
       chat_messages_vbox.getChildren().add(0, msg);
     } else {
       msg.setAsReceive();
-      msg.setText(message.getContent());
+      updateFileType(msg, message);
       chat_messages_vbox.getChildren().add(0, msg);
     }
     scrollDown();
@@ -204,7 +338,7 @@ public class ChatRoom extends BorderPane {
 
     if (message.getSender().equals(user.getUserName())) {
       msg.setAsSend();
-      msg.setText(message.getContent());
+      updateFileType(msg, message);
       chat_messages_vbox.getChildren().add(msg);
 
       TimerHelper.executeOnceAfter(() -> {
@@ -212,7 +346,7 @@ public class ChatRoom extends BorderPane {
       }, 200);
     } else {
       msg.setAsReceive();
-      msg.setText(message.getContent());
+      updateFileType(msg, message);
       chat_messages_vbox.getChildren().add(msg);
     }
   }

@@ -26,6 +26,20 @@ public class FormHelper {
     });
   } 
 
+  public static void submitData(File file, IConsumer2<HttpResponse> consumer) throws Exception {
+    HttpEntity submitEntity = MultipartEntityBuilder
+      .create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+      .addBinaryBody("files", file)
+      .build();
+
+    HttpPost httpPost = new HttpPost(App.cdnUrl + "upload");
+    httpPost.setEntity(submitEntity);
+
+    HttpClientHelper.start(httpPost, httpResponse -> {
+      consumer.run(httpResponse);
+    });
+  }
+
   public static void test() throws Exception {    
     File file = new File("/home/larryjason/project/java-chat-client/src/main/resources/images/user-avatar.png");
     HttpEntity submitEntity = MultipartEntityBuilder
